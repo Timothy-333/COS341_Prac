@@ -2,15 +2,17 @@ import java.util.*;
 import java.util.regex.*;
 
 public class Lexer {
-    public String text;
-    public List<TokenClass> tokenList = new ArrayList<TokenClass>();
+    private String text;
+    private List<TokenClass> tokenList = new ArrayList<TokenClass>();
 
     public enum TokenClassType {
-        T,
-        N,
-        F,
-        V,
+        tokent,
+        tokenn,
+        tokenf,
+        tokenv,
         res_key,
+    };
+    public enum TokenClassKeyword {
         MAIN,
         NUM,
         TEXT,
@@ -41,53 +43,36 @@ public class Lexer {
     private static final Pattern TEXT_PATTERN = Pattern.compile("\"[A-Z][a-z]{0,7}\"");
     private static final Pattern NUMBER_PATTERN = Pattern.compile("0|0\\.([0-9])*|\\-0\\.([0-9])*|[1-9]([0-9])*|\\-[1-9]([0-9])*|[1-9]([0-9])*\\.([0-9])*|\\-[1-9]([0-9])*\\.([0-9])*");
 
-    public TokenClass assignType(TokenClassType type, String word) {
-        switch (type) {
-            case T:
-                return new TokenClass(2, "T", word);
-            case N:
-                return new TokenClass(3, "N", word);
-            case F:
-                return new TokenClass(4, "F", word);
-            case V:
-                return new TokenClass(5, "V", word);
-            case res_key:
-                return new TokenClass(6, "reserved_keyword", word);
-            default:
-                return null;
-        }
-    }
-
     public Lexer(String text) {
         this.text = text;
     }
-
-    public void lex() {
+    public List<TokenClass> lex() {
         Scanner scanner = new Scanner(text);
         while (scanner.hasNext()) {
             String token = scanner.next();
             if (token.length() == 1 && isSingleCharacterToken(token.charAt(0))) {
-                tokenList.add(assignType(TokenClassType.res_key, token));
+                tokenList.add(new TokenClass(TokenClassType.res_key, token));
             } else if (token.startsWith("V_") && isVariable(token)) {
-                tokenList.add(assignType(TokenClassType.V, token));
+                tokenList.add(new TokenClass(TokenClassType.tokenv, token));
             } else if (token.startsWith("F_") && isFunction(token)) {
-                tokenList.add(assignType(TokenClassType.F, token));
+                tokenList.add(new TokenClass(TokenClassType.tokenf, token));
             } else if (isKeyword(token)) {
-                tokenList.add(assignType(TokenClassType.res_key, token));
+                tokenList.add(new TokenClass(TokenClassType.res_key, token));
             } else if (isText(token)) {
-                tokenList.add(assignType(TokenClassType.T, token));
+                tokenList.add(new TokenClass(TokenClassType.tokent, token));
             } else if (isNumber(token)) {
-                tokenList.add(assignType(TokenClassType.N, token));
+                tokenList.add(new TokenClass(TokenClassType.tokenn, token));
             } else {
                 throw new RuntimeException("Invalid token: " + token);
             }
         }
         scanner.close();
+        return tokenList;
     }
 
     private boolean isKeyword(String word) {
         try {
-            TokenClassType.valueOf(word.toUpperCase());
+            TokenClassKeyword.valueOf(word.toUpperCase());
             return true;
         } catch (IllegalArgumentException e) {
             return false;

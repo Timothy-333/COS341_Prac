@@ -1,14 +1,26 @@
 public class TokenClass{
-public Integer tokenID;
-public String tokenClassName;
-public String tokenClassWord;
+private Lexer.TokenClassType tokenClassType;
+private String tokenClassWord;
 
-TokenClass(Integer tokenID, String tokenClassName, String tokenClassWord){
-    this.tokenID = tokenID;
-    this.tokenClassName = tokenClassName;
+TokenClass(Lexer.TokenClassType tokenClassType, String tokenClassWord){
+    this.tokenClassType = tokenClassType;
     this.tokenClassWord = tokenClassWord;
 }
 
 TokenClass(){}
-
+public String getType(){
+    if (tokenClassType == Lexer.TokenClassType.res_key){
+        return tokenClassWord;
+    }
+    else 
+    {
+        return tokenClassType.name();
+    }
+}
+public String getWord(){
+    return tokenClassWord;
+}
+public String toString(){
+    return tokenClassWord;
+}
 };

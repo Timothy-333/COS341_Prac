@@ -35,6 +35,7 @@ public class Lexer {
         SUB,
         MUL,
         DIV,
+        RETURN,
         VOID
     };
 
@@ -80,7 +81,7 @@ public class Lexer {
     }
 
     private boolean isSingleCharacterToken(char ch) {
-        return "{}()=,;".indexOf(ch) != -1;
+        return "{}()=,;<".indexOf(ch) != -1;
     }
 
     private boolean isVariable(String token) {

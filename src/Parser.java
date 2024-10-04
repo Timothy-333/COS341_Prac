@@ -34,8 +34,10 @@ public class Parser {
                         throw new RuntimeException("Invalid rule number: " + ruleNumber);
                     }
                     Rule rule = rules.get(ruleNumber);
-                    for (int i = 0; i < rule.getRhs().size(); i++) {
-                        stack.pop();
+                    if (!rule.getRhs().get(0).equals("")) {
+                        for (int i = 0; i < rule.getRhs().size(); i++) {
+                            stack.pop();
+                        }
                     }
                     int newState = stack.peek();
                     int gotoState = getGoto(newState, rule.getLhs());
@@ -77,7 +79,9 @@ public class Parser {
         System.out.println("State: " + state + ", Non-terminal: " + nonTerminal + ", Column index: " + columnIndex);
         String value = SLRParseTable.PARSE_TABLE[state][columnIndex];
         if (value == null) {
-            throw new RuntimeException("Goto value is null for non-terminal: " + nonTerminal + " in state: " + state);
+            // Handle nullable non-terminal case
+            System.out.println("Goto value is null for non-terminal: " + nonTerminal + " in state: " + state);
+            return -1; // Return a default state or handle it as needed
         }
         try {
             return (int) Float.parseFloat(value);

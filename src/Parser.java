@@ -10,14 +10,15 @@ public class Parser {
     }
 
     public void parse() {
-        Stack<Integer> stack = new Stack<>();
-        stack.push(0); // Initial state
+        Stack<Integer> stateStack = new Stack<>();
+        Stack<Object> semanticStack = new Stack<>();
+        stateStack.push(0); // Initial state
     
         int index = 0;
         try {
-            while (index < tokenList.size()) {
-                TokenClass token = tokenList.get(index);
-                int state = stack.peek();
+            while (true) {
+                TokenClass token = index < tokenList.size() ? tokenList.get(index) : new TokenClass(Lexer.TokenClassType.$, "$"); // Use a special EOF token when out of tokens
+                int state = stateStack.peek();
                 String action = getAction(state, token);
     
                 if (action == null) {
@@ -25,7 +26,8 @@ public class Parser {
                 } else if (action.startsWith("s")) {
                     // Shift action
                     int nextState = Integer.parseInt(action.substring(1));
-                    stack.push(nextState);
+                    stateStack.push(nextState);
+                    semanticStack.push(token); // Push the token onto the semantic stack
                     index++;
                 } else if (action.startsWith("r")) {
                     // Reduce action
@@ -36,15 +38,18 @@ public class Parser {
                     Rule rule = rules.get(ruleNumber);
                     if (!rule.getRhs().get(0).equals("")) {
                         for (int i = 0; i < rule.getRhs().size(); i++) {
-                            stack.pop();
+                            stateStack.pop();
+                            semanticStack.pop(); // Pop the semantic stack
                         }
                     }
-                    int newState = stack.peek();
+                    int newState = stateStack.peek();
                     int gotoState = getGoto(newState, rule.getLhs());
                     if (gotoState == -1) {
                         throw new RuntimeException("Goto state not found for non-terminal: " + rule.getLhs());
                     }
-                    stack.push(gotoState);
+                    stateStack.push(gotoState);
+                    // Push the result of the reduction onto the semantic stack
+                    semanticStack.push(rule.getLhs());
                 } else if (action.equals("acc")) {
                     // Accept action
                     System.out.println("Parsing completed successfully.");
@@ -52,7 +57,7 @@ public class Parser {
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
                 }
-                System.out.println("Token: " + token + ", Action: " + action + ", Stack: " + stack);
+                System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
             }
         } catch (Exception e) {
             System.err.println("Error during parsing: " + e.getMessage());

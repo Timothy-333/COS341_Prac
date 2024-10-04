@@ -11,6 +11,7 @@ public class Lexer {
         tokenf,
         tokenv,
         res_key,
+        $
     };
     public enum TokenClassKeyword {
         MAIN,

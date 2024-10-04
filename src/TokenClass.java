@@ -21,6 +21,6 @@ public String getWord(){
     return tokenClassWord;
 }
 public String toString(){
-    return tokenClassType.name() + " " + tokenClassWord;
+    return tokenClassWord;
 }
 };

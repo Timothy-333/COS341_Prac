@@ -299,7 +299,7 @@ public class Parser {
     }
 
     public void writeToFile(String fileName, String root) {
-        // Define the folder and file path
+        // Defining the folder and file path
         String folderPath = "outputs/";
         File folder = new File(folderPath);
 

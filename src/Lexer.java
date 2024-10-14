@@ -49,26 +49,27 @@ public class Lexer {
         this.text = text;
     }
     public List<TokenClass> lex() {
-        Scanner scanner = new Scanner(text);
-        while (scanner.hasNext()) {
-            String token = scanner.next();
-            if (token.length() == 1 && isSingleCharacterToken(token.charAt(0))) {
-                tokenList.add(new TokenClass(TokenClassType.res_key, token));
-            } else if (token.startsWith("V_") && isVariable(token)) {
-                tokenList.add(new TokenClass(TokenClassType.tokenv, token));
-            } else if (token.startsWith("F_") && isFunction(token)) {
-                tokenList.add(new TokenClass(TokenClassType.tokenf, token));
-            } else if (isKeyword(token)) {
-                tokenList.add(new TokenClass(TokenClassType.res_key, token));
-            } else if (isText(token)) {
-                tokenList.add(new TokenClass(TokenClassType.tokent, token));
-            } else if (isNumber(token)) {
-                tokenList.add(new TokenClass(TokenClassType.tokenn, token));
-            } else {
-                throw new RuntimeException("Invalid token: " + token);
+        try (Scanner scanner = new Scanner(text)) {
+            while (scanner.hasNext()) {
+                String token = scanner.next();
+                if (token.length() == 1 && isSingleCharacterToken(token.charAt(0))) {
+                    tokenList.add(new TokenClass(TokenClassType.res_key, token));
+                } else if (token.startsWith("V_") && isVariable(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenv, token));
+                } else if (token.startsWith("F_") && isFunction(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenf, token));
+                } else if (isKeyword(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.res_key, token));
+                } else if (isText(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokent, token));
+                } else if (isNumber(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenn, token));
+                } else {
+                    throw new RuntimeException("Invalid token: " + token);
+                }
             }
+            scanner.close();
         }
-        scanner.close();
         return tokenList;
     }
 

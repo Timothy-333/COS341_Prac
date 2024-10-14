@@ -17,6 +17,10 @@ public String getType(){
         return tokenClassType.name();
     }
 }
+
+public String getAbsoluteType(){
+        return tokenClassType.name();
+}
 public String getWord(){
     return tokenClassWord;
 }

@@ -283,6 +283,22 @@ public class Parser {
             sb.append("</").append(tag).append(">\n");
             return sb.toString();
         }
+
+        public String getTag() {
+            return tag;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public List<XMLParseTree> getChildren() {
+            return children;
+        }
+
+        public String getAttribute(String string) {
+            return null; //TODO Implement this
+        }
     }
     
 }

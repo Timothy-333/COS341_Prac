@@ -36,6 +36,8 @@ public class main {
             List<TokenClass> tokenList = lexer.lex();
             Parser parser = new Parser(tokenList);
             parser.parse();
+            ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+            scopeAnalyzer.analyze(parser.getRoot());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -8,9 +8,9 @@ public class ScopeAnalyzer {
     private SymbolTable symbolTable = new SymbolTable();
 
     public void analyze(Parser.XMLParseTree root) {
-        symbolTable.enterScope(); // Enter global scope
+        symbolTable.enterScope();
         traverseTree(root);
-        symbolTable.exitScope(); // Exit global scope
+        symbolTable.exitScope();
     }
 
     private void traverseTree(Parser.XMLParseTree node) {
@@ -22,23 +22,22 @@ public class ScopeAnalyzer {
             case "FUNCTION":
                 // New function scope
                 symbolTable.enterScope();
-                String functionName = node.getValue(); // Assuming function name is stored in value
+                String functionName = node.getValue();
                 symbolTable.declareSymbol(functionName, "function");
                 break;
             case "DECL":
                 // Variable declaration
-                String varName = node.getValue(); // Assuming variable name is stored in value
-                String varType = getVarType(node); // You'll need to implement getVarType based on the node structure
+                String varName = node.getValue();
+                String varType = getVarType(node);
                 symbolTable.declareSymbol(varName, varType);
                 break;
             case "CALL":
                 // Function call
-                String calledFunction = node.getValue(); // Assuming function call name is stored in value
+                String calledFunction = node.getValue();
                 if (symbolTable.lookupSymbol(calledFunction) == null) {
                     throw new RuntimeException("Function " + calledFunction + " not declared");
                 }
                 break;
-            // Add other cases as needed
         }
 
         for (Parser.XMLParseTree child : node.getChildren()) {

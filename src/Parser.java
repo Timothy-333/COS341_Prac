@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.io.*;
 
 public class Parser {
     public List<TokenClass> tokenList;
@@ -33,7 +34,7 @@ public class Parser {
                     stateStack.push(nextState);
                     semanticStack.push(token); // Push the token onto the semantic stack
                     
-                    XMLParseTree leaf = new XMLParseTree(token.getType(),id++);
+                    XMLParseTree leaf = new XMLParseTree(token.getAbsoluteType(),id++);
                     leaf.setValue(token.getWord()); //Set Value of Leaf
                     treeStack.push(leaf); //Add to Tree Stack
                     index++;
@@ -87,8 +88,17 @@ public class Parser {
                         this.root.addChild(temp.pop());
                     }
 
+
+
+                    String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
+                    String xmlFileBody = root.toString();
+                    String xmlFile = xmlFileHeader + xmlFileBody;
+
                     System.out.println("XML Parse Tree:");
-                    System.out.println(root.toString());
+                    System.out.println(xmlFile);
+
+                    writeToFile("result.xml",xmlFile);
+                
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
@@ -108,7 +118,7 @@ public class Parser {
 
     private int getColumnIndex(TokenClass token) {
         for (int i = 0; i < SLRParseTable.HEADERS.length; i++) {
-            if (SLRParseTable.HEADERS[i].equals(token.getType())) { //TODO This still needs to be fixed
+            if (SLRParseTable.HEADERS[i].equals(token.getType())) {
                 return i;
             }
         }
@@ -157,6 +167,9 @@ public class Parser {
             return rhs;
         }
     }
+
+
+
     private static final List<Rule> rules = new ArrayList<>(Arrays.asList(
         new Rule("PROG", Arrays.asList("main", "GLOBVARS", "ALGO", "FUNCTIONS")),
         new Rule("GLOBVARS", Arrays.asList("")),
@@ -246,7 +259,7 @@ public class Parser {
         // Recursive method with indentation
         public String toString(int depth) {
             StringBuilder sb = new StringBuilder();
-            String indent = "  ".repeat(depth); // Two spaces per depth level
+            String indent = "\t".repeat(depth); // Two spaces per depth level
     
             // Collect children IDs
             StringBuilder childrenIds = new StringBuilder();
@@ -284,5 +297,31 @@ public class Parser {
             return sb.toString();
         }
     }
-    
+
+    public void writeToFile(String fileName, String root) {
+        // Define the folder and file path
+        String folderPath = "outputs/";
+        File folder = new File(folderPath);
+
+        // Create the folder if it doesn't exist
+        if (!folder.exists()) {
+            boolean isCreated = folder.mkdirs();
+            if (!isCreated) {
+                System.err.println("Failed to create output directory.");
+                return;
+            }
+        }
+
+        // Write to the file
+        try (FileWriter writer = new FileWriter(folderPath + fileName)) {
+            if (root != null) {
+                writer.write(root);
+                System.out.println("Data written to file: " + fileName);
+            } else {
+                System.out.println("No data found to write.");
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
 }

@@ -5,6 +5,8 @@ import java.util.Stack;
 
 public class Parser {
     public List<TokenClass> tokenList;
+    public  XMLParseTree root;
+    public static int id;
     public Parser(List<TokenClass> tokenList) {
         this.tokenList = tokenList;
     }
@@ -12,7 +14,9 @@ public class Parser {
     public void parse() {
         Stack<Integer> stateStack = new Stack<>();
         Stack<Object> semanticStack = new Stack<>();
+        Stack<XMLParseTree> treeStack = new Stack<>();
         stateStack.push(0); // Initial state
+        // treeStack.push(root);
     
         int index = 0;
         try {
@@ -28,6 +32,10 @@ public class Parser {
                     int nextState = Integer.parseInt(action.substring(1));
                     stateStack.push(nextState);
                     semanticStack.push(token); // Push the token onto the semantic stack
+                    
+                    XMLParseTree leaf = new XMLParseTree(token.getType(),id++);
+                    leaf.setValue(token.getWord()); //Set Value of Leaf
+                    treeStack.push(leaf); //Add to Tree Stack
                     index++;
                 } else if (action.startsWith("r")) {
                     // Reduce action
@@ -36,11 +44,22 @@ public class Parser {
                         throw new RuntimeException("Invalid rule number: " + ruleNumber);
                     }
                     Rule rule = rules.get(ruleNumber);
+                    XMLParseTree node = new XMLParseTree(rule.getLhs(),id++); // Create a new node for the rule
+                    
                     if (!rule.getRhs().get(0).equals("")) {
+                        List<XMLParseTree> children = new ArrayList<>();
                         for (int i = 0; i < rule.getRhs().size(); i++) {
                             stateStack.pop();
                             semanticStack.pop(); // Pop the semantic stack
+                            children.add(treeStack.pop()); // Pop Tree Stack and Add to Children List
                         }
+                        //Reversiing Stack to be in correct order
+                        for (int i = children.size() - 1; i >= 0; i--) {
+                            node.addChild(children.get(i));                  
+                        }
+                        
+                        
+                        
                     }
                     int newState = stateStack.peek();
                     int gotoState = getGoto(newState, rule.getLhs());
@@ -48,11 +67,28 @@ public class Parser {
                         throw new RuntimeException("Goto state not found for non-terminal: " + rule.getLhs());
                     }
                     stateStack.push(gotoState);
-                    // Push the result of the reduction onto the semantic stack
+                    // Push the result of the reduction onto the semantic stack and tree stack
+                    treeStack.push(node);          
                     semanticStack.push(rule.getLhs());
+
+
                 } else if (action.equals("acc")) {
                     // Accept action
-                    System.out.println("Parsing completed successfully.");
+                    System.out.println("Parsing completed successfully.\n");
+                    this.root = new XMLParseTree("PROG",id++);
+                    
+                    Stack<XMLParseTree> temp = new Stack<>();
+                    while (!treeStack.isEmpty()) {
+
+                        temp.add(treeStack.pop());
+                    }
+
+                    while (!temp.isEmpty()) {
+                        this.root.addChild(temp.pop());
+                    }
+
+                    System.out.println("XML Parse Tree:");
+                    System.out.println(root.toString());
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
@@ -72,7 +108,7 @@ public class Parser {
 
     private int getColumnIndex(TokenClass token) {
         for (int i = 0; i < SLRParseTable.HEADERS.length; i++) {
-            if (SLRParseTable.HEADERS[i].equals(token.getType())) {
+            if (SLRParseTable.HEADERS[i].equals(token.getType())) { //TODO This still needs to be fixed
                 return i;
             }
         }
@@ -181,4 +217,72 @@ public class Parser {
         new Rule("LOCVARS", Arrays.asList("VTYP", "VNAME", ",", "VTYP", "VNAME", ",", "VTYP", "VNAME", ",")),
         new Rule("SUBFUNCS", Arrays.asList("FUNCTIONS"))
     ));
+
+    class XMLParseTree {
+        private String tag;
+        private List<XMLParseTree> children;
+        private String value;
+        private int id;
+    
+        public XMLParseTree(String tag, int id) {
+            this.id = id;
+            this.tag = tag;
+            this.children = new ArrayList<>();
+        }
+    
+        public void addChild(XMLParseTree child) {
+            children.add(child);
+        }
+    
+        public void setValue(String value) {
+            this.value = value;
+        }
+    
+        @Override
+        public String toString() {
+            return toString(0); // Start with depth 0
+        }
+    
+        // Recursive method with indentation
+        public String toString(int depth) {
+            StringBuilder sb = new StringBuilder();
+            String indent = "  ".repeat(depth); // Two spaces per depth level
+    
+            // Collect children IDs
+            StringBuilder childrenIds = new StringBuilder();
+            for (XMLParseTree child : children) {
+                if (childrenIds.length() > 0) {
+                    childrenIds.append(",");
+                }
+                childrenIds.append(child.id);
+            }
+    
+            // Open tag with ID and children IDs
+            sb.append(indent)
+              .append("<").append(tag)
+              .append(" id=\"").append(id).append("\"");
+    
+            if (childrenIds.length() > 0) {
+                sb.append(" children=\"").append(childrenIds).append("\"");
+            } else {
+                sb.append(" children=\"\"");
+            }
+            sb.append(">");
+    
+            // Add value or child nodes
+            if (value != null) {
+                sb.append(value);
+            } else {
+                sb.append("\n");
+                for (XMLParseTree child : children) {
+                    sb.append(child.toString(depth + 1)); // Recursive call with increased depth
+                }
+                sb.append(indent); // Closing tag at the same indentation level
+            }
+    
+            sb.append("</").append(tag).append(">\n");
+            return sb.toString();
+        }
+    }
+    
 }

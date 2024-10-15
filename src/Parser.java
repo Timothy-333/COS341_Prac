@@ -35,6 +35,7 @@ public class Parser {
                     semanticStack.push(token); // Push the token onto the semantic stack
                     
                     XMLParseTree leaf = new XMLParseTree(token.getAbsoluteType(),id++);
+                    
                     leaf.setValue(token.getWord()); //Set Value of Leaf
                     treeStack.push(leaf); //Add to Tree Stack
                     index++;
@@ -248,7 +249,11 @@ public class Parser {
         }
     
         public void setValue(String value) {
-            this.value = value;
+            if (value.equals("<")){
+            this.value = "$lt;";
+            }else{
+                this.value =value;
+            }
         }
     
         @Override

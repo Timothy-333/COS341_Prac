@@ -1,113 +1,86 @@
-
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 public class ScopeAnalyzer {
-    private SymbolTable symbolTable = new SymbolTable();
+    private Map<String, SymbolInfo> symbolTable = new HashMap<>();
+    private int uniqueIdCounter = 0;
 
     public void analyze(Parser.XMLParseTree root) {
-        symbolTable.enterScope();
-        traverseTree(root);
-        symbolTable.exitScope();
+        System.out.println("Starting analysis...");
+        traverseTree(root, 0); // Start with the global scope (scope ID 0)
+        System.out.println("Analysis complete.");
     }
 
-    private void traverseTree(Parser.XMLParseTree node) {
-        switch (node.getTag()) {
-            case "PROG":
-                // Global program scope
-                symbolTable.enterScope();
-                break;
-            case "FUNCTION":
-                // New function scope
-                symbolTable.enterScope();
-                String functionName = node.getValue();
-                symbolTable.declareSymbol(functionName, "function");
-                break;
-            case "DECL":
-                // Variable declaration
-                String varName = node.getValue();
-                String varType = getVarType(node);
-                symbolTable.declareSymbol(varName, varType);
-                break;
-            case "CALL":
-                // Function call
-                String calledFunction = node.getValue();
-                if (symbolTable.lookupSymbol(calledFunction) == null) {
-                    throw new RuntimeException("Function " + calledFunction + " not declared");
-                }
-                break;
-        }
+    private void traverseTree(Parser.XMLParseTree node, int scopeId) {
+        if (node == null) return;
 
+        // Process the current node
+        processNode(node, scopeId);
+
+        // Recursively process the children
         for (Parser.XMLParseTree child : node.getChildren()) {
-            traverseTree(child);
-        }
-
-        // Exit scope at the end of blocks or functions
-        if (node.getTag().equals("PROG") || node.getTag().equals("FUNCTION")) {
-            symbolTable.exitScope();
+            traverseTree(child, scopeId); // Pass the current scope ID to children
         }
     }
 
-    private String getVarType(Parser.XMLParseTree node) {
-        // Logic to determine the variable type based on node's structure
-        // This could involve checking the tag or an attribute in the XML node
-        return node.getAttribute("type");
-    }
-}
+    private void processNode(Parser.XMLParseTree node, int scopeId) {
+        String tag = node.getTag();
+        String value = node.getValue();
 
-class Scope {
-    private Map<String, String> symbols = new HashMap<>();
-    private Scope parentScope;
+        System.out.println("Processing node with tag: " + tag + ", value: " + value);
 
-    public Scope(Scope parentScope) {
-        this.parentScope = parentScope;
-    }
-
-    public void declareSymbol(String name, String type) {
-        symbols.put(name, type);
-    }
-
-    public String lookupSymbol(String name) {
-        if (symbols.containsKey(name)) {
-            return symbols.get(name);
-        } else if (parentScope != null) {
-            return parentScope.lookupSymbol(name);
-        } else {
-            return null;
-        }
-    }
-}
-
-class SymbolTable {
-    private Stack<Scope> scopeStack = new Stack<>();
-
-    public void enterScope() {
-        Scope newScope = new Scope(currentScope());
-        scopeStack.push(newScope);
-    }
-
-    public void exitScope() {
-        if (!scopeStack.isEmpty()) {
-            scopeStack.pop();
+        if (isUserDefinedVariable(tag)) {
+            String uniqueName = generateUniqueName("v");
+            symbolTable.put(uniqueName, new SymbolInfo(tag, value, scopeId));
+            node.setValue(uniqueName); // Rename the variable in the tree
+            System.out.println("Renamed variable '" + value + "' to '" + uniqueName + "'");
+        } else if (isUserDefinedFunction(tag)) {
+            String uniqueName = generateUniqueName("f");
+            symbolTable.put(uniqueName, new SymbolInfo(tag, value, scopeId));
+            node.setValue(uniqueName); // Rename the function in the tree
+            System.out.println("Renamed function '" + value + "' to '" + uniqueName + "'");
         }
     }
 
-    public void declareSymbol(String name, String type) {
-        if (!scopeStack.isEmpty()) {
-            scopeStack.peek().declareSymbol(name, type);
-        }
+    private boolean isUserDefinedVariable(String tag) {
+        // Implement logic to determine if the tag represents a user-defined variable
+        return tag.equals("tokenv");
     }
 
-    public String lookupSymbol(String name) {
-        if (!scopeStack.isEmpty()) {
-            return scopeStack.peek().lookupSymbol(name);
-        }
-        return null;
+    private boolean isUserDefinedFunction(String tag) {
+        // Implement logic to determine if the tag represents a user-defined function
+        return tag.equals("tokenf");
     }
 
-    private Scope currentScope() {
-        return scopeStack.isEmpty() ? null : scopeStack.peek();
+    private String generateUniqueName(String prefix) {
+        return prefix + uniqueIdCounter++;
+    }
+
+    public SymbolInfo getSymbolInfo(String uniqueName) {
+        return symbolTable.get(uniqueName);
+    }
+
+    public static class SymbolInfo {
+        private String originalName;
+        private String uniqueName;
+        private int scopeId;
+
+        public SymbolInfo(String originalName, String uniqueName, int scopeId) {
+            this.originalName = originalName;
+            this.uniqueName = uniqueName;
+            this.scopeId = scopeId;
+        }
+
+        public String getOriginalName() {
+            return originalName;
+        }
+
+        public String getUniqueName() {
+            return uniqueName;
+        }
+
+        public int getScopeId() {
+            return scopeId;
+        }
     }
 }

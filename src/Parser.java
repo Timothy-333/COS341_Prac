@@ -102,15 +102,20 @@ public class Parser {
                     String xmlFile = xmlFileHeader + xmlFileBody;
 
                     System.out.println("XML Parse Tree:");
-                    System.out.println(xmlFile);
+                    // System.out.println(xmlFile);
 
                     writeToFile("result.xml",xmlFile);
+                    ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+                    scopeAnalyzer.analyze(getRoot());
+                    xmlFileBody = root.toString();
+                    xmlFile = xmlFileHeader + xmlFileBody;
+                    writeToFile("scopeResult.xml",xmlFile);
                 
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
                 }
-                System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
+                // System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
             }
         } catch (Exception e) {
             System.err.println("Error during parsing: " + e.getMessage());
@@ -134,7 +139,7 @@ public class Parser {
 
     private int getGoto(int state, String nonTerminal) {
         int columnIndex = getColumnIndex(nonTerminal);
-        System.out.println("State: " + state + ", Non-terminal: " + nonTerminal + ", Column index: " + columnIndex);
+        // System.out.println("State: " + state + ", Non-terminal: " + nonTerminal + ", Column index: " + columnIndex);
         String value = SLRParseTable.PARSE_TABLE[state][columnIndex];
         if (value == null) {
             // Handle nullable non-terminal case
@@ -330,6 +335,9 @@ public class Parser {
     
             public List<XMLParseTree> getChildren() {
                 return children;
+            }
+            public int getId() {
+                return id;
             }
         }
 

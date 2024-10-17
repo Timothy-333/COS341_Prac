@@ -1,13 +1,17 @@
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.*;
+
 public class ScopeAnalyzer {
     private Map<String, SymbolInfo> symbolTable = new HashMap<>();
     private int uniqueIdCounter = 0;
-    boolean typeEncountered = false;
+    private boolean typeEncountered = false;
+    private Deque<Integer> scopeStack = new ArrayDeque<>();
 
     public void analyze(Parser.XMLParseTree root) {
         System.out.println("Starting analysis...");
+        scopeStack.push(root.getId());
         traverseTree(root);
         System.out.println("Analysis complete.");
     }
@@ -18,19 +22,25 @@ public class ScopeAnalyzer {
         processNode(node);
 
         for (Parser.XMLParseTree child : node.getChildren()) {
-            traverseTree(child); 
+            traverseTree(child);
+        }
+
+        if (node.getTag().equals("return")) {
+            scopeStack.pop();
         }
     }
 
     private void processNode(Parser.XMLParseTree node) {
         String tag = node.getTag();
         String value = node.getValue();
-        int scopeId = node.getId();
+        int scopeId = scopeStack.peek();
         System.out.println("Processing node with tag: " + tag + ", value: " + value);
+
         if (tag.equals("res_key") && (value.equals("text") || value.equals("num"))) {
             typeEncountered = true;
         }
-                if (isUserDefinedVariable(tag) && typeEncountered) {
+
+        if (isUserDefinedVariable(tag) && typeEncountered) {
             typeEncountered = false;
             String uniqueName = generateUniqueName("v");
             symbolTable.put(uniqueName, new SymbolInfo(value, scopeId));
@@ -46,8 +56,7 @@ public class ScopeAnalyzer {
                 // Handle the case where the variable is not declared (optional)
                 System.err.println("Error: Variable '" + value + "' used without declaration in scope " + scopeId);
             }
-        }
-        else if (isUserDefinedFunction(tag) && typeEncountered) {
+        } else if (isUserDefinedFunction(tag) && typeEncountered) {
             typeEncountered = false;
             String uniqueName = generateUniqueName("f");
             symbolTable.put(uniqueName, new SymbolInfo(value, scopeId));
@@ -55,7 +64,8 @@ public class ScopeAnalyzer {
             System.out.println("Renamed function '" + value + "' to '" + uniqueName + "'" + " in scope " + scopeId);
         }
     }
-        private String findDeclaredVariableName(String variableName, int scopeId) {
+
+    private String findDeclaredVariableName(String variableName, int scopeId) {
         // Traverse the symbol table to find the variable declaration in the current or parent scopes
         for (Map.Entry<String, SymbolInfo> entry : symbolTable.entrySet()) {
             SymbolInfo info = entry.getValue();
@@ -94,7 +104,6 @@ public class ScopeAnalyzer {
 
     public static class SymbolInfo {
         private String originalName;
-        private String uniqueName;
         private int scopeId;
 
         public SymbolInfo(String originalName, int scopeId) {
@@ -104,10 +113,6 @@ public class ScopeAnalyzer {
 
         public String getOriginalName() {
             return originalName;
-        }
-
-        public String getUniqueName() {
-            return uniqueName;
         }
 
         public int getScopeId() {

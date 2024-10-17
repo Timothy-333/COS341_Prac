@@ -180,8 +180,6 @@ public class Parser {
         }
     }
 
-
-
     private static final List<Rule> rules = new ArrayList<>(Arrays.asList(
         new Rule("PROG", Arrays.asList("main", "GLOBVARS", "ALGO", "FUNCTIONS")),
         new Rule("GLOBVARS", Arrays.asList("")),

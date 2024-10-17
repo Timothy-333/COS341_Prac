@@ -2,7 +2,7 @@ import java.util.*;
 public class main {
     public static void main(String[] args) {
         String text = "main\n" + //
-                        "num V_x , text V_y ,\n" + //
+                        "num V_x , text V_y , num V_a , num V_b , num V_c ,\n" + //
                         "begin\n" + //
                         "  V_x < input ;\n" + //
                         "  V_y = \"Hello\" ;\n" + //

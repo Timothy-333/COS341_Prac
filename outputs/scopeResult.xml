@@ -27,7 +27,7 @@
 			<COMMAND id="20" children="19">
 				<ASSIGN id="19" children="16,17,18">
 					<VNAME id="16" children="15">
-						<tokenv id="15" children="">v2</tokenv>
+						<tokenv id="15" children="">v0</tokenv>
 					</VNAME>
 					<res_key id="17" children=""><</res_key>
 					<res_key id="18" children="">input</res_key>
@@ -38,7 +38,7 @@
 				<COMMAND id="30" children="29">
 					<ASSIGN id="29" children="23,24,28">
 						<VNAME id="23" children="22">
-							<tokenv id="22" children="">v3</tokenv>
+							<tokenv id="22" children="">v1</tokenv>
 						</VNAME>
 						<res_key id="24" children="">=</res_key>
 						<TERM id="28" children="27">
@@ -63,7 +63,7 @@
 									<res_key id="35" children="">(</res_key>
 									<ATOMIC id="38" children="37">
 										<VNAME id="37" children="36">
-											<tokenv id="36" children="">v4</tokenv>
+											<tokenv id="36" children="">v0</tokenv>
 										</VNAME>
 									</ATOMIC>
 									<res_key id="39" children="">,</res_key>
@@ -83,7 +83,7 @@
 										<res_key id="48" children="">print</res_key>
 										<ATOMIC id="51" children="50">
 											<VNAME id="50" children="49">
-												<tokenv id="49" children="">v5</tokenv>
+												<tokenv id="49" children="">v1</tokenv>
 											</VNAME>
 										</ATOMIC>
 									</COMMAND>
@@ -93,7 +93,7 @@
 											<res_key id="54" children="">print</res_key>
 											<ATOMIC id="57" children="56">
 												<VNAME id="56" children="55">
-													<tokenv id="55" children="">v6</tokenv>
+													<tokenv id="55" children="">v0</tokenv>
 												</VNAME>
 											</ATOMIC>
 										</COMMAND>
@@ -129,18 +129,18 @@
 						<COMMAND id="101" children="100">
 							<ASSIGN id="100" children="81,82,99">
 								<VNAME id="81" children="80">
-									<tokenv id="80" children="">v7</tokenv>
+									<tokenv id="80" children="">v0</tokenv>
 								</VNAME>
 								<res_key id="82" children="">=</res_key>
 								<TERM id="99" children="98">
 									<CALL id="98" children="84,85,88,89,92,93,96,97">
 										<FNAME id="84" children="83">
-											<tokenf id="83" children="">f8</tokenf>
+											<tokenf id="83" children="">F_test</tokenf>
 										</FNAME>
 										<res_key id="85" children="">(</res_key>
 										<ATOMIC id="88" children="87">
 											<VNAME id="87" children="86">
-												<tokenv id="86" children="">v9</tokenv>
+												<tokenv id="86" children="">v0</tokenv>
 											</VNAME>
 										</ATOMIC>
 										<res_key id="89" children="">,</res_key>
@@ -187,19 +187,19 @@
 					<res_key id="117" children="">num</res_key>
 				</FTYP>
 				<FNAME id="120" children="119">
-					<tokenf id="119" children="">f10</tokenf>
+					<tokenf id="119" children="">f2</tokenf>
 				</FNAME>
 				<res_key id="121" children="">(</res_key>
 				<VNAME id="123" children="122">
-					<tokenv id="122" children="">v11</tokenv>
+					<tokenv id="122" children="">V_a</tokenv>
 				</VNAME>
 				<res_key id="124" children="">,</res_key>
 				<VNAME id="126" children="125">
-					<tokenv id="125" children="">v12</tokenv>
+					<tokenv id="125" children="">V_b</tokenv>
 				</VNAME>
 				<res_key id="127" children="">,</res_key>
 				<VNAME id="129" children="128">
-					<tokenv id="128" children="">v13</tokenv>
+					<tokenv id="128" children="">V_c</tokenv>
 				</VNAME>
 				<res_key id="130" children="">)</res_key>
 			</HEADER>
@@ -212,21 +212,21 @@
 						<res_key id="134" children="">num</res_key>
 					</VTYP>
 					<VNAME id="137" children="136">
-						<tokenv id="136" children="">v14</tokenv>
+						<tokenv id="136" children="">v3</tokenv>
 					</VNAME>
 					<res_key id="138" children="">,</res_key>
 					<VTYP id="140" children="139">
 						<res_key id="139" children="">text</res_key>
 					</VTYP>
 					<VNAME id="142" children="141">
-						<tokenv id="141" children="">v15</tokenv>
+						<tokenv id="141" children="">v4</tokenv>
 					</VNAME>
 					<res_key id="143" children="">,</res_key>
 					<VTYP id="145" children="144">
 						<res_key id="144" children="">num</res_key>
 					</VTYP>
 					<VNAME id="147" children="146">
-						<tokenv id="146" children="">v16</tokenv>
+						<tokenv id="146" children="">v5</tokenv>
 					</VNAME>
 					<res_key id="148" children="">,</res_key>
 				</LOCVARS>
@@ -236,7 +236,7 @@
 						<COMMAND id="170" children="169">
 							<ASSIGN id="169" children="152,153,168">
 								<VNAME id="152" children="151">
-									<tokenv id="151" children="">v17</tokenv>
+									<tokenv id="151" children="">v3</tokenv>
 								</VNAME>
 								<res_key id="153" children="">=</res_key>
 								<TERM id="168" children="167">
@@ -248,7 +248,7 @@
 										<ARG id="160" children="159">
 											<ATOMIC id="159" children="158">
 												<VNAME id="158" children="157">
-													<tokenv id="157" children="">v18</tokenv>
+													<tokenv id="157" children="">V_a</tokenv>
 												</VNAME>
 											</ATOMIC>
 										</ARG>
@@ -256,7 +256,7 @@
 										<ARG id="165" children="164">
 											<ATOMIC id="164" children="163">
 												<VNAME id="163" children="162">
-													<tokenv id="162" children="">v19</tokenv>
+													<tokenv id="162" children="">V_b</tokenv>
 												</VNAME>
 											</ATOMIC>
 										</ARG>
@@ -270,7 +270,7 @@
 							<COMMAND id="191" children="190">
 								<ASSIGN id="190" children="173,174,189">
 									<VNAME id="173" children="172">
-										<tokenv id="172" children="">v20</tokenv>
+										<tokenv id="172" children="">v3</tokenv>
 									</VNAME>
 									<res_key id="174" children="">=</res_key>
 									<TERM id="189" children="188">
@@ -282,7 +282,7 @@
 											<ARG id="181" children="180">
 												<ATOMIC id="180" children="179">
 													<VNAME id="179" children="178">
-														<tokenv id="178" children="">v21</tokenv>
+														<tokenv id="178" children="">v3</tokenv>
 													</VNAME>
 												</ATOMIC>
 											</ARG>
@@ -290,7 +290,7 @@
 											<ARG id="186" children="185">
 												<ATOMIC id="185" children="184">
 													<VNAME id="184" children="183">
-														<tokenv id="183" children="">v22</tokenv>
+														<tokenv id="183" children="">V_c</tokenv>
 													</VNAME>
 												</ATOMIC>
 											</ARG>
@@ -305,7 +305,7 @@
 									<res_key id="193" children="">return</res_key>
 									<ATOMIC id="196" children="195">
 										<VNAME id="195" children="194">
-											<tokenv id="194" children="">v23</tokenv>
+											<tokenv id="194" children="">v3</tokenv>
 										</VNAME>
 									</ATOMIC>
 								</COMMAND>

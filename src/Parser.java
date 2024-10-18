@@ -89,7 +89,11 @@ public class Parser {
                         this.root.addChild(temp.pop());
                     }
 
-
+                    TypeChecker t = new TypeChecker();
+                    if (t.typeCheck(this.root)){
+                        System.out.println("TERRIFIC!");
+                    }else{
+                        System.out.println("TERRIBLE!");};
 
                     String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
                     String xmlFileBody = root.toString();
@@ -232,101 +236,30 @@ public class Parser {
         new Rule("SUBFUNCS", Arrays.asList("FUNCTIONS"))
     ));
 
-    class XMLParseTree {
-        private String tag;
-        private List<XMLParseTree> children;
-        private String value;
-        private int id;
-    
-        public XMLParseTree(String tag, int id) {
-            this.id = id;
-            this.tag = tag;
-            this.children = new ArrayList<>();
-        }
-    
-        public void addChild(XMLParseTree child) {
-            children.add(child);
-        }
-    
-        public void setValue(String value) {
-            if (value.equals("<")){
-            this.value = "$lt;";
-            }else{
-                this.value =value;
-            }
-        }
-    
-        @Override
-        public String toString() {
-            return toString(0); // Start with depth 0
-        }
-    
-        // Recursive method with indentation
-        public String toString(int depth) {
-            StringBuilder sb = new StringBuilder();
-            String indent = "\t".repeat(depth); // Two spaces per depth level
-    
-            // Collect children IDs
-            StringBuilder childrenIds = new StringBuilder();
-            for (XMLParseTree child : children) {
-                if (childrenIds.length() > 0) {
-                    childrenIds.append(",");
-                }
-                childrenIds.append(child.id);
-            }
-    
-            // Open tag with ID and children IDs
-            sb.append(indent)
-              .append("<").append(tag)
-              .append(" id=\"").append(id).append("\"");
-    
-            if (childrenIds.length() > 0) {
-                sb.append(" children=\"").append(childrenIds).append("\"");
-            } else {
-                sb.append(" children=\"\"");
-            }
-            sb.append(">");
-    
-            // Add value or child nodes
-            if (value != null) {
-                sb.append(value);
-            } else {
-                sb.append("\n");
-                for (XMLParseTree child : children) {
-                    sb.append(child.toString(depth + 1)); // Recursive call with increased depth
-                }
-                sb.append(indent); // Closing tag at the same indentation level
-            }
-    
-            sb.append("</").append(tag).append(">\n");
-            return sb.toString();
+public void writeToFile(String fileName, String root) {
+    // Defining the folder and file path
+    String folderPath = "outputs/";
+    File folder = new File(folderPath);
+
+    // Create the folder if it doesn't exist
+    if (!folder.exists()) {
+        boolean isCreated = folder.mkdirs();
+        if (!isCreated) {
+            System.err.println("Failed to create output directory.");
+            return;
         }
     }
 
-    public void writeToFile(String fileName, String root) {
-        // Defining the folder and file path
-        String folderPath = "outputs/";
-        File folder = new File(folderPath);
-
-        // Create the folder if it doesn't exist
-        if (!folder.exists()) {
-            boolean isCreated = folder.mkdirs();
-            if (!isCreated) {
-                System.err.println("Failed to create output directory.");
-                return;
-            }
+    // Write to the file
+    try (FileWriter writer = new FileWriter(folderPath + fileName)) {
+        if (root != null) {
+            writer.write(root);
+            System.out.println("Data written to file: " + fileName);
+        } else {
+            System.out.println("No data found to write.");
         }
-
-        // Write to the file
-        try (FileWriter writer = new FileWriter(folderPath + fileName)) {
-            if (root != null) {
-                writer.write(root);
-                System.out.println("Data written to file: " + fileName);
-            } else {
-                System.out.println("No data found to write.");
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
-        }
+    } catch (IOException e) {
+        System.err.println("Error writing to file: " + e.getMessage());
     }
+}
 }

@@ -30,6 +30,18 @@ public class main {
                         "    return V_result ;\n" + //
                         "end\n" + //
                         "}\n" + //
+                        "end\n" + //
+                        "num F_test2 ( V_a , V_b , V_c )\n" + //
+                        "{\n" + //
+                        "  num V_result ,\n" + //
+                        "  text V_d ,\n" + //
+                        "  num V_e ,\n" + //
+                        "  begin\n" + //
+                        "    V_result = add ( V_a , V_b ) ;\n" + //
+                        "    V_result = sub ( V_result , V_c ) ;\n" + //
+                        "    return V_result ;\n" + //
+                        "end\n" + //
+                        "}\n" + //
                         "end";
         Lexer lexer = new Lexer(text);
         try {

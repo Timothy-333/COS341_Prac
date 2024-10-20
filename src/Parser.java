@@ -106,7 +106,12 @@ public class Parser {
 
                     writeToFile("result.xml",xmlFile);
                     ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
-                    scopeAnalyzer.analyze(getRoot());
+                    try {
+                        scopeAnalyzer.analyze(getRoot());
+                        scopeAnalyzer.printSymbolTable();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                     xmlFileBody = root.toString();
                     xmlFile = xmlFileHeader + xmlFileBody;
                     writeToFile("scopeResult.xml",xmlFile);
@@ -179,6 +184,8 @@ public class Parser {
             return rhs;
         }
     }
+
+
 
     private static final List<Rule> rules = new ArrayList<>(Arrays.asList(
         new Rule("PROG", Arrays.asList("main", "GLOBVARS", "ALGO", "FUNCTIONS")),

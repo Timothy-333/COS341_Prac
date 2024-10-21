@@ -1,7 +1,10 @@
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Deque;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class ScopeAnalyzer {
     private Map<String, SymbolInfo> symbolTable = new HashMap<>();
@@ -10,11 +13,44 @@ public class ScopeAnalyzer {
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
     // Entry point for analysis
-    public void analyze(Parser.XMLParseTree root) {
+        public void analyze(Parser.XMLParseTree root) {
         System.out.println("Starting analysis...");
-        scopeStack.push(new Scope(root.getId())); // Initialize scope with the root's ID
+        scopeStack.push(new Scope(root.getId(), "F_main")); // Initialize scope with the root's ID
         traverseTree(root); // Start traversal from the root of the parse tree
+    
+        // Check for function calls without declarations
+        for (Scope scope : scopeStack) {
+            if (!scope.getCallsWithoutDeclarations().isEmpty()) {
+                throw new RuntimeException("Error: Function '" + scope.getName() + "' called without declaration in scope " + scope.getId());
+            }
+        }
+    
+        // Check for conflicts between variable names and function names
+        checkForNameConflicts();
+    
         System.out.println("Analysis complete.");
+    }
+    
+    private void checkForNameConflicts() {
+        Map<String, String> variableNames = new HashMap<>();
+        Map<String, String> functionNames = new HashMap<>();
+    
+        // Separate variable and function names
+        for (Map.Entry<String, SymbolInfo> entry : symbolTable.entrySet()) {
+            SymbolInfo info = entry.getValue();
+            if (entry.getKey().startsWith("v")) {
+                variableNames.put(info.getOriginalName().substring(2), entry.getKey());
+            } else if (entry.getKey().startsWith("f")) {
+                functionNames.put(info.getOriginalName().substring(2), entry.getKey());
+            }
+        }
+        // Check for conflicts
+        for (String varName : variableNames.keySet()) {
+            System.out.println("Checking for conflicts with variable '" + varName + "'");
+            if (functionNames.containsKey(varName)) {
+                throw new RuntimeException("Error: Name conflict between variable '" + varName + "' and function '" + varName + "'");
+            }
+        }
     }
 
     // Traverses the XML parse tree recursively
@@ -28,6 +64,9 @@ public class ScopeAnalyzer {
         }
 
         if (node.getTag().equals("return")) {
+            if(!scopeStack.peek().getCallsWithoutDeclarations().isEmpty()) {
+                throw new RuntimeException("Error: Function '" + scopeStack.peek().getName() + "' called without declaration in scope " + scopeStack.peek().getId());
+            }
             scopeStack.pop(); // Exit scope when encountering a return statement
         }
     }
@@ -36,35 +75,37 @@ public class ScopeAnalyzer {
     private void processNode(Parser.XMLParseTree node) {
         String tag = node.getTag();
         String value = node.getValue();
-        Scope currentScope = scopeStack.peek(); // Get the current scope
-        System.out.println("Processing node with tag: " + tag + ", value: " + value);
-
-        // Handle type declaration
         if (tag.equals("res_key") && (value.equals("text") || value.equals("num"))) {
             typeEncountered = value; // Set the current type to be encountered
         }
+        if (tag.equals("tokenv") || tag.equals("tokenf")) {
+            Scope currentScope = scopeStack.peek(); // Get the current scope
+            System.out.println("Processing node with tag: " + tag + ", value: " + value);
 
-        // Handle variable declaration or usage
-        if (isUserDefinedVariable(tag)) {
-            handleVariable(node, value, currentScope);
-        } 
-        // Handle function declaration or usage
-        else if (isUserDefinedFunction(tag)) {
-            handleFunction(node, value, currentScope);
+            if (tag.equals("tokenv")) {
+                handleVariable(node, value, currentScope);
+            } 
+            // Handle function declaration or usage
+            else if (tag.equals("tokenf")) {
+                handleFunction(node, value, currentScope);
+            }
         }
     }
 
     // Handle variable declaration or usage
     private void handleVariable(Parser.XMLParseTree node, String value, Scope currentScope) {
-        String declaredName = findDeclaredVariableName(value);
-
+        String declaredName = findDeclaredVariableNameInScopes(value);
+        if(Lexer.isKeyword(value.substring(2))) {
+            throw new RuntimeException("Error: Variable '" + value + "' is a keyword in scope " + currentScope.getId());
+        }
         // Check if the variable has already been declared
         if (declaredName != null) {
-            if (typeEncountered != null) {
+            if (typeEncountered != null && findDeclaredVariableNameInScope(value, currentScope) != null) {
                 throw new RuntimeException("Error: Variable '" + value + "' redeclared in scope " + currentScope.getId());
             }
             node.setValue(declaredName); // Use the previously declared variable name
             System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
+            symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
         } else {
             // If the variable has not been declared, and a type is encountered, declare it
             if (typeEncountered != null) {
@@ -72,7 +113,7 @@ public class ScopeAnalyzer {
                 symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
                 currentScope.addVariable(value, uniqueName); // Add variable to the current scope
                 node.setValue(uniqueName); // Rename the variable in the parse tree
-                System.out.println("Declared and renamed variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+                System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
                 typeEncountered = null; // Clear the type after declaration
             } else {
                 throw new RuntimeException("Error: Variable '" + value + "' used without declaration in scope " + currentScope.getId());
@@ -80,38 +121,57 @@ public class ScopeAnalyzer {
         }
     }
 
-    // Handle function declaration or usage
     private void handleFunction(Parser.XMLParseTree node, String value, Scope currentScope) {
         if (typeEncountered != null) {
+            if (findDeclaredFunctionNameInScope(value, currentScope) != null || scopeStack.peek().getName().equals(value)) {
+                throw new RuntimeException("Error: Function '" + value + "' redeclared in scope " + currentScope.getId());
+            }
             String uniqueName = generateUniqueName("f");
             symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
             currentScope.addFunction(value, uniqueName); // Add function to the current scope
             node.setValue(uniqueName); // Rename the function in the parse tree
-            scopeStack.push(new Scope(node.getId())); // Enter a new scope for the function body
+            currentScope.removeCallWithoutDeclaration(value); // Remove the call from the list of calls without declaration
+            scopeStack.push(new Scope(node.getId(), value)); // Enter a new scope for the function body
             System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
             typeEncountered = null; // Clear the type after function declaration
         }
-    }
-
-    // Finds a declared variable in the current or parent scope
-    private String findDeclaredVariableName(String variableName) {
-        for (Scope scope : scopeStack) {
-            String declaredName = scope.getVariable(variableName);
+        else {
+            String declaredName = findDeclaredFunctionNameInScope(value, currentScope);
+            // Check if the function has already been declared in the current scope
             if (declaredName != null) {
-                return declaredName; // Return the unique name if found
+                node.setValue(declaredName); // Use the previously declared function name
+                System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
+                symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
+            }
+            //Recursive case
+            if (scopeStack.peek().getName().equals(value) && !value.equals("F_main")) {
+                node.setValue(value);
+                System.out.println("Using declared function '" + value + "' for '" + value + "' in scope " + currentScope.getId());
+                symbolTable.get(value).addTreeId(node.getId());
+            }
+            else {
+                currentScope.addCallWithoutDeclaration(value);
             }
         }
-        return null; // Return null if not found
     }
 
-    // Determines if a tag represents a user-defined variable
-    private boolean isUserDefinedVariable(String tag) {
-        return tag.equals("tokenv"); // Adjust this condition based on your grammar
+    private String findDeclaredVariableNameInScopes(String originalName) {
+        // Iterate over the scope stack in reverse order
+        Iterator<Scope> iterator = scopeStack.descendingIterator();
+        while (iterator.hasNext()) {
+            Scope scope = iterator.next();
+            String uniqueName = findDeclaredVariableNameInScope(originalName, scope);
+            if (uniqueName != null) {
+                return uniqueName;
+            }
+        }
+        return null;
     }
-
-    // Determines if a tag represents a user-defined function
-    private boolean isUserDefinedFunction(String tag) {
-        return tag.equals("tokenf"); // Adjust this condition based on your grammar
+    private String findDeclaredVariableNameInScope(String originalName, Scope scope) {
+        return scope.getVariable(originalName);
+    }
+    private String findDeclaredFunctionNameInScope(String originalName, Scope scope) {
+        return scope.getFunction(originalName);
     }
 
     // Generates a unique name for variables or functions
@@ -123,7 +183,6 @@ public class ScopeAnalyzer {
     public SymbolInfo getSymbolInfo(String uniqueName) {
         return symbolTable.get(uniqueName);
     }
-
     // Prints the contents of the symbol table for debugging purposes
     public void printSymbolTable() {
         System.out.println("Symbol Table:");
@@ -131,7 +190,7 @@ public class ScopeAnalyzer {
             SymbolInfo info = entry.getValue();
             System.out.println("Name: " + entry.getKey() + ", Original Name: " + info.getOriginalName() + 
                                ", Scope: " + info.getScopeId() + ", Type: " + info.getType() + 
-                               ", Tree ID: " + info.getTreeId());
+                               ", Tree ID: " + info.getTreeIds());
         }
     }
 
@@ -140,13 +199,14 @@ public class ScopeAnalyzer {
         private String originalName; // The original name of the symbol (variable or function)
         private int scopeId; // The scope in which the symbol is declared
         private String type; // The type of the symbol (e.g., "text", "num")
-        private int treeId; // The ID of the parse tree node where the symbol is declared
+        private List<Integer> treeIds; // The tree IDs where the symbol is used
 
         public SymbolInfo(String originalName, int scopeId, String type, int treeId) {
             this.originalName = originalName;
             this.scopeId = scopeId;
             this.type = type;
-            this.treeId = treeId;
+            this.treeIds = new ArrayList<>();
+            treeIds.add(treeId);
         }
 
         public String getOriginalName() {
@@ -161,23 +221,32 @@ public class ScopeAnalyzer {
             return type;
         }
 
-        public int getTreeId() {
-            return treeId;
+        public List<Integer> getTreeIds() {
+            return treeIds;
+        }
+        public void addTreeId(int treeId) {
+            treeIds.add(treeId);
         }
     }
 
     // Class to represent a scope
     private static class Scope {
         private int id;
+        private String name;
+        private List<String> callsWithoutDeclarations = new ArrayList<>();
         private Map<String, String> variables = new HashMap<>();
         private Map<String, String> functions = new HashMap<>();
 
-        public Scope(int id) {
+        public Scope(int id, String name) {
             this.id = id;
+            this.name = name;
         }
 
         public int getId() {
             return id;
+        }
+        public String getName() {
+            return name;
         }
 
         public void addVariable(String originalName, String uniqueName) {
@@ -194,6 +263,18 @@ public class ScopeAnalyzer {
 
         public String getFunction(String originalName) {
             return functions.get(originalName);
+        }
+        public void addCallWithoutDeclaration(String name) {
+            callsWithoutDeclarations.add(name);
+        }
+        public void removeCallWithoutDeclaration(String name) {
+            try {
+                callsWithoutDeclarations.remove(name);
+            } catch (Exception e) {
+            }
+        }
+        public List<String> getCallsWithoutDeclarations() {
+            return callsWithoutDeclarations;
         }
     }
 }

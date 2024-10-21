@@ -73,7 +73,7 @@ public class Lexer {
         return tokenList;
     }
 
-    private boolean isKeyword(String word) {
+    public static boolean isKeyword(String word) {
         try {
             TokenClassKeyword.valueOf(word.toUpperCase());
             return true;

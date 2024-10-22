@@ -12,7 +12,7 @@ public class ScopeAnalyzer {
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
     // Entry point for analysis
-        public void analyze(Parser.XMLParseTree root) {
+    public void analyze(Parser.XMLParseTree root) {
         System.out.println("Starting analysis...");
         scopeStack.push(new Scope(root.getId(), "F_main")); // Initialize scope with the root's ID
         traverseTree(root); // Start traversal from the root of the parse tree
@@ -20,7 +20,7 @@ public class ScopeAnalyzer {
         // Check for function calls without declarations
         for (Scope scope : scopeStack) {
             if (!scope.getCallsWithoutDeclarations().isEmpty()) {
-                throw new RuntimeException("Error: Function '" + scope.getName() + "' called without declaration in scope " + scope.getId());
+                throw new RuntimeException("Error: Function '" + scope.getCallsWithoutDeclarations() + "' called without declaration in scope " + scope.getId());
             }
         }
     
@@ -60,21 +60,24 @@ public class ScopeAnalyzer {
         for (Parser.XMLParseTree child : node.getChildren()) {
             traverseTree(child); // Recursively process child nodes
         }
-
-        if (node.getTag().equals("return")) {
-            if(!scopeStack.peek().getCallsWithoutDeclarations().isEmpty()) {
-                throw new RuntimeException("Error: Function '" + scopeStack.peek().getName() + "' called without declaration in scope " + scopeStack.peek().getId());
-            }
-            scopeStack.pop(); // Exit scope when encountering a return statement
-        }
     }
 
     // Processes an individual XML parse tree node
     private void processNode(Parser.XMLParseTree node) {
         String tag = node.getTag();
         String value = node.getValue();
-        if (tag.equals("res_key") && (value.equals("text") || value.equals("num"))) {
-            typeEncountered = value; // Set the current type to be encountered
+        if (tag.equals("res_key")) {
+            if((value.equals("text") || value.equals("num")))
+                typeEncountered = value; // Set the current type to be encountered
+            else if(value.equals("}"))
+            {
+                Scope currentScope = scopeStack.peek();
+                currentScope.setClosingBracketEncountered(true);
+            }
+            else if(value.equals("end") && scopeStack.peek().isClosingBracketEncountered())
+            {
+                scopeStack.pop();
+            }
         }
         if (tag.equals("tokenv") || tag.equals("tokenf")) {
             Scope currentScope = scopeStack.peek(); // Get the current scope
@@ -252,6 +255,7 @@ public class ScopeAnalyzer {
         private List<Parser.XMLParseTree> callsWithoutDeclarations = new ArrayList<>();
         private Map<String, String> variables = new HashMap<>();
         private Map<String, String> functions = new HashMap<>();
+        private boolean closingBracketEncountered = false;
 
         public Scope(int id, String name) {
             this.id = id;
@@ -294,9 +298,16 @@ public class ScopeAnalyzer {
             for (Parser.XMLParseTree call : callsWithoutDeclarations) {
                 if (call.getValue().equals(name)) {
                     calls.add(call);
+                    System.out.println("Found call without declaration for '" + name + "' in scope " + id);
                 }
             }
             return calls;
+        }
+        public boolean isClosingBracketEncountered() {
+            return closingBracketEncountered;
+        }
+        public void setClosingBracketEncountered(boolean closingBracketEncountered) {
+            this.closingBracketEncountered = closingBracketEncountered;
         }
     }
 }

@@ -168,10 +168,8 @@ public class ScopeAnalyzer {
     }
 
     private String findDeclaredVariableNameInScopes(String originalName) {
-        // Iterate over the scope stack in reverse order
-        Iterator<Scope> iterator = scopeStack.descendingIterator();
-        while (iterator.hasNext()) {
-            Scope scope = iterator.next();
+        // Iterate over the scope stack in natural order
+        for (Scope scope : scopeStack) {
             String uniqueName = findDeclaredVariableNameInScope(originalName, scope);
             if (uniqueName != null) {
                 return uniqueName;

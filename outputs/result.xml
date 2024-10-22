@@ -283,7 +283,7 @@
 										<ARG id="183" children="182">
 											<ATOMIC id="182" children="181">
 												<VNAME id="181" children="180">
-													<tokenv id="180" children="">V_b</tokenv>
+													<tokenv id="180" children="">V_y</tokenv>
 												</VNAME>
 											</ATOMIC>
 										</ARG>

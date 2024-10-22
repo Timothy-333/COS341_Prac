@@ -25,7 +25,7 @@ public class main {
                         "  text V_d ,\n" + //
                         "  num V_y ,\n" + //
                         "  begin\n" + //
-                        "    V_result = add ( V_a , V_b ) ;\n" + //
+                        "    V_result = add ( V_a , V_y ) ;\n" + //
                         "    V_result = sub ( V_result , V_c ) ;\n" + //
                         "    V_result = F_test ( V_result , 2 , 5 ) ;\n" + //
                         "    return V_result ;\n" + //

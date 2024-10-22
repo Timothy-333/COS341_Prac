@@ -1,5 +1,5 @@
 <? xml="1.0" encoding="UTF-8" ?>
-<PROG id="513" children="0,31,151,512">
+<PROG id="753" children="0,31,151,752">
 	<res_key id="0" children="">main</res_key>
 	<GLOBVARS id="31" children="2,4,5,30">
 		<VTYP id="2" children="1">
@@ -233,7 +233,7 @@
 		</INSTRUC>
 		<res_key id="150" children="">end</res_key>
 	</ALGO>
-	<FUNCTIONS id="512" children="390,511">
+	<FUNCTIONS id="752" children="390,751">
 		<DECL id="390" children="166,389">
 			<HEADER id="166" children="153,155,156,158,159,161,162,164,165">
 				<FTYP id="153" children="152">
@@ -363,7 +363,7 @@
 										<TERM id="247" children="246">
 											<CALL id="246" children="232,233,236,237,240,241,244,245">
 												<FNAME id="232" children="231">
-													<tokenf id="231" children="">F_test2</tokenf>
+													<tokenf id="231" children="">F_test3</tokenf>
 												</FNAME>
 												<res_key id="233" children="">(</res_key>
 												<ATOMIC id="236" children="235">
@@ -418,7 +418,7 @@
 									<res_key id="266" children="">num</res_key>
 								</FTYP>
 								<FNAME id="269" children="268">
-									<tokenf id="268" children="">F_test2</tokenf>
+									<tokenf id="268" children="">F_test3</tokenf>
 								</FNAME>
 								<res_key id="270" children="">(</res_key>
 								<VNAME id="272" children="271">
@@ -541,7 +541,7 @@
 														<TERM id="361" children="360">
 															<CALL id="360" children="346,347,350,351,354,355,358,359">
 																<FNAME id="346" children="345">
-																	<tokenf id="345" children="">F_test2</tokenf>
+																	<tokenf id="345" children="">F_test3</tokenf>
 																</FNAME>
 																<res_key id="347" children="">(</res_key>
 																<ATOMIC id="350" children="349">
@@ -602,8 +602,8 @@
 				<res_key id="388" children="">end</res_key>
 			</BODY>
 		</DECL>
-		<FUNCTIONS id="511" children="509,510">
-			<DECL id="509" children="405,508">
+		<FUNCTIONS id="751" children="749,750">
+			<DECL id="749" children="405,748">
 				<HEADER id="405" children="392,394,395,397,398,400,401,403,404">
 					<FTYP id="392" children="391">
 						<res_key id="391" children="">num</res_key>
@@ -625,7 +625,7 @@
 					</VNAME>
 					<res_key id="404" children="">)</res_key>
 				</HEADER>
-				<BODY id="508" children="407,423,502,504,506,507">
+				<BODY id="748" children="407,423,502,504,746,747">
 					<PROLOG id="407" children="406">
 						<res_key id="406" children="">{</res_key>
 					</PROLOG>
@@ -732,7 +732,7 @@
 											<TERM id="486" children="485">
 												<CALL id="485" children="471,472,475,476,479,480,483,484">
 													<FNAME id="471" children="470">
-														<tokenf id="470" children="">F_test</tokenf>
+														<tokenf id="470" children="">F_test3</tokenf>
 													</FNAME>
 													<res_key id="472" children="">(</res_key>
 													<ATOMIC id="475" children="474">
@@ -779,14 +779,384 @@
 					<EPILOG id="504" children="503">
 						<res_key id="503" children="">}</res_key>
 					</EPILOG>
-					<SUBFUNCS id="506" children="505">
-						<FUNCTIONS id="505" children="">
+					<SUBFUNCS id="746" children="745">
+						<FUNCTIONS id="745" children="743,744">
+							<DECL id="743" children="519,742">
+								<HEADER id="519" children="506,508,509,511,512,514,515,517,518">
+									<FTYP id="506" children="505">
+										<res_key id="505" children="">num</res_key>
+									</FTYP>
+									<FNAME id="508" children="507">
+										<tokenf id="507" children="">F_test4</tokenf>
+									</FNAME>
+									<res_key id="509" children="">(</res_key>
+									<VNAME id="511" children="510">
+										<tokenv id="510" children="">V_a</tokenv>
+									</VNAME>
+									<res_key id="512" children="">,</res_key>
+									<VNAME id="514" children="513">
+										<tokenv id="513" children="">V_b</tokenv>
+									</VNAME>
+									<res_key id="515" children="">,</res_key>
+									<VNAME id="517" children="516">
+										<tokenv id="516" children="">V_c</tokenv>
+									</VNAME>
+									<res_key id="518" children="">)</res_key>
+								</HEADER>
+								<BODY id="742" children="521,537,616,618,740,741">
+									<PROLOG id="521" children="520">
+										<res_key id="520" children="">{</res_key>
+									</PROLOG>
+									<LOCVARS id="537" children="523,525,526,528,530,531,533,535,536">
+										<VTYP id="523" children="522">
+											<res_key id="522" children="">num</res_key>
+										</VTYP>
+										<VNAME id="525" children="524">
+											<tokenv id="524" children="">V_result</tokenv>
+										</VNAME>
+										<res_key id="526" children="">,</res_key>
+										<VTYP id="528" children="527">
+											<res_key id="527" children="">text</res_key>
+										</VTYP>
+										<VNAME id="530" children="529">
+											<tokenv id="529" children="">V_d</tokenv>
+										</VNAME>
+										<res_key id="531" children="">,</res_key>
+										<VTYP id="533" children="532">
+											<res_key id="532" children="">num</res_key>
+										</VTYP>
+										<VNAME id="535" children="534">
+											<tokenv id="534" children="">V_y</tokenv>
+										</VNAME>
+										<res_key id="536" children="">,</res_key>
+									</LOCVARS>
+									<ALGO id="616" children="538,614,615">
+										<res_key id="538" children="">begin</res_key>
+										<INSTRUC id="614" children="558,559,613">
+											<COMMAND id="558" children="557">
+												<ASSIGN id="557" children="540,541,556">
+													<VNAME id="540" children="539">
+														<tokenv id="539" children="">V_result</tokenv>
+													</VNAME>
+													<res_key id="541" children="">=</res_key>
+													<TERM id="556" children="555">
+														<OP id="555" children="543,544,548,549,553,554">
+															<BINOP id="543" children="542">
+																<res_key id="542" children="">add</res_key>
+															</BINOP>
+															<res_key id="544" children="">(</res_key>
+															<ARG id="548" children="547">
+																<ATOMIC id="547" children="546">
+																	<VNAME id="546" children="545">
+																		<tokenv id="545" children="">V_a</tokenv>
+																	</VNAME>
+																</ATOMIC>
+															</ARG>
+															<res_key id="549" children="">,</res_key>
+															<ARG id="553" children="552">
+																<ATOMIC id="552" children="551">
+																	<VNAME id="551" children="550">
+																		<tokenv id="550" children="">V_y</tokenv>
+																	</VNAME>
+																</ATOMIC>
+															</ARG>
+															<res_key id="554" children="">)</res_key>
+														</OP>
+													</TERM>
+												</ASSIGN>
+											</COMMAND>
+											<res_key id="559" children="">;</res_key>
+											<INSTRUC id="613" children="579,580,612">
+												<COMMAND id="579" children="578">
+													<ASSIGN id="578" children="561,562,577">
+														<VNAME id="561" children="560">
+															<tokenv id="560" children="">V_result</tokenv>
+														</VNAME>
+														<res_key id="562" children="">=</res_key>
+														<TERM id="577" children="576">
+															<OP id="576" children="564,565,569,570,574,575">
+																<BINOP id="564" children="563">
+																	<res_key id="563" children="">sub</res_key>
+																</BINOP>
+																<res_key id="565" children="">(</res_key>
+																<ARG id="569" children="568">
+																	<ATOMIC id="568" children="567">
+																		<VNAME id="567" children="566">
+																			<tokenv id="566" children="">V_result</tokenv>
+																		</VNAME>
+																	</ATOMIC>
+																</ARG>
+																<res_key id="570" children="">,</res_key>
+																<ARG id="574" children="573">
+																	<ATOMIC id="573" children="572">
+																		<VNAME id="572" children="571">
+																			<tokenv id="571" children="">V_c</tokenv>
+																		</VNAME>
+																	</ATOMIC>
+																</ARG>
+																<res_key id="575" children="">)</res_key>
+															</OP>
+														</TERM>
+													</ASSIGN>
+												</COMMAND>
+												<res_key id="580" children="">;</res_key>
+												<INSTRUC id="612" children="602,603,611">
+													<COMMAND id="602" children="601">
+														<ASSIGN id="601" children="582,583,600">
+															<VNAME id="582" children="581">
+																<tokenv id="581" children="">V_result</tokenv>
+															</VNAME>
+															<res_key id="583" children="">=</res_key>
+															<TERM id="600" children="599">
+																<CALL id="599" children="585,586,589,590,593,594,597,598">
+																	<FNAME id="585" children="584">
+																		<tokenf id="584" children="">F_test5</tokenf>
+																	</FNAME>
+																	<res_key id="586" children="">(</res_key>
+																	<ATOMIC id="589" children="588">
+																		<VNAME id="588" children="587">
+																			<tokenv id="587" children="">V_result</tokenv>
+																		</VNAME>
+																	</ATOMIC>
+																	<res_key id="590" children="">,</res_key>
+																	<ATOMIC id="593" children="592">
+																		<CONST id="592" children="591">
+																			<tokenn id="591" children="">2</tokenn>
+																		</CONST>
+																	</ATOMIC>
+																	<res_key id="594" children="">,</res_key>
+																	<ATOMIC id="597" children="596">
+																		<CONST id="596" children="595">
+																			<tokenn id="595" children="">5</tokenn>
+																		</CONST>
+																	</ATOMIC>
+																	<res_key id="598" children="">)</res_key>
+																</CALL>
+															</TERM>
+														</ASSIGN>
+													</COMMAND>
+													<res_key id="603" children="">;</res_key>
+													<INSTRUC id="611" children="608,609,610">
+														<COMMAND id="608" children="604,607">
+															<res_key id="604" children="">return</res_key>
+															<ATOMIC id="607" children="606">
+																<VNAME id="606" children="605">
+																	<tokenv id="605" children="">V_result</tokenv>
+																</VNAME>
+															</ATOMIC>
+														</COMMAND>
+														<res_key id="609" children="">;</res_key>
+														<INSTRUC id="610" children="">
+														</INSTRUC>
+													</INSTRUC>
+												</INSTRUC>
+											</INSTRUC>
+										</INSTRUC>
+										<res_key id="615" children="">end</res_key>
+									</ALGO>
+									<EPILOG id="618" children="617">
+										<res_key id="617" children="">}</res_key>
+									</EPILOG>
+									<SUBFUNCS id="740" children="739">
+										<FUNCTIONS id="739" children="737,738">
+											<DECL id="737" children="633,736">
+												<HEADER id="633" children="620,622,623,625,626,628,629,631,632">
+													<FTYP id="620" children="619">
+														<res_key id="619" children="">num</res_key>
+													</FTYP>
+													<FNAME id="622" children="621">
+														<tokenf id="621" children="">F_test5</tokenf>
+													</FNAME>
+													<res_key id="623" children="">(</res_key>
+													<VNAME id="625" children="624">
+														<tokenv id="624" children="">V_a</tokenv>
+													</VNAME>
+													<res_key id="626" children="">,</res_key>
+													<VNAME id="628" children="627">
+														<tokenv id="627" children="">V_b</tokenv>
+													</VNAME>
+													<res_key id="629" children="">,</res_key>
+													<VNAME id="631" children="630">
+														<tokenv id="630" children="">V_c</tokenv>
+													</VNAME>
+													<res_key id="632" children="">)</res_key>
+												</HEADER>
+												<BODY id="736" children="635,651,730,732,734,735">
+													<PROLOG id="635" children="634">
+														<res_key id="634" children="">{</res_key>
+													</PROLOG>
+													<LOCVARS id="651" children="637,639,640,642,644,645,647,649,650">
+														<VTYP id="637" children="636">
+															<res_key id="636" children="">num</res_key>
+														</VTYP>
+														<VNAME id="639" children="638">
+															<tokenv id="638" children="">V_result</tokenv>
+														</VNAME>
+														<res_key id="640" children="">,</res_key>
+														<VTYP id="642" children="641">
+															<res_key id="641" children="">text</res_key>
+														</VTYP>
+														<VNAME id="644" children="643">
+															<tokenv id="643" children="">V_d</tokenv>
+														</VNAME>
+														<res_key id="645" children="">,</res_key>
+														<VTYP id="647" children="646">
+															<res_key id="646" children="">num</res_key>
+														</VTYP>
+														<VNAME id="649" children="648">
+															<tokenv id="648" children="">V_y</tokenv>
+														</VNAME>
+														<res_key id="650" children="">,</res_key>
+													</LOCVARS>
+													<ALGO id="730" children="652,728,729">
+														<res_key id="652" children="">begin</res_key>
+														<INSTRUC id="728" children="672,673,727">
+															<COMMAND id="672" children="671">
+																<ASSIGN id="671" children="654,655,670">
+																	<VNAME id="654" children="653">
+																		<tokenv id="653" children="">V_result</tokenv>
+																	</VNAME>
+																	<res_key id="655" children="">=</res_key>
+																	<TERM id="670" children="669">
+																		<OP id="669" children="657,658,662,663,667,668">
+																			<BINOP id="657" children="656">
+																				<res_key id="656" children="">add</res_key>
+																			</BINOP>
+																			<res_key id="658" children="">(</res_key>
+																			<ARG id="662" children="661">
+																				<ATOMIC id="661" children="660">
+																					<VNAME id="660" children="659">
+																						<tokenv id="659" children="">V_a</tokenv>
+																					</VNAME>
+																				</ATOMIC>
+																			</ARG>
+																			<res_key id="663" children="">,</res_key>
+																			<ARG id="667" children="666">
+																				<ATOMIC id="666" children="665">
+																					<VNAME id="665" children="664">
+																						<tokenv id="664" children="">V_y</tokenv>
+																					</VNAME>
+																				</ATOMIC>
+																			</ARG>
+																			<res_key id="668" children="">)</res_key>
+																		</OP>
+																	</TERM>
+																</ASSIGN>
+															</COMMAND>
+															<res_key id="673" children="">;</res_key>
+															<INSTRUC id="727" children="693,694,726">
+																<COMMAND id="693" children="692">
+																	<ASSIGN id="692" children="675,676,691">
+																		<VNAME id="675" children="674">
+																			<tokenv id="674" children="">V_result</tokenv>
+																		</VNAME>
+																		<res_key id="676" children="">=</res_key>
+																		<TERM id="691" children="690">
+																			<OP id="690" children="678,679,683,684,688,689">
+																				<BINOP id="678" children="677">
+																					<res_key id="677" children="">sub</res_key>
+																				</BINOP>
+																				<res_key id="679" children="">(</res_key>
+																				<ARG id="683" children="682">
+																					<ATOMIC id="682" children="681">
+																						<VNAME id="681" children="680">
+																							<tokenv id="680" children="">V_result</tokenv>
+																						</VNAME>
+																					</ATOMIC>
+																				</ARG>
+																				<res_key id="684" children="">,</res_key>
+																				<ARG id="688" children="687">
+																					<ATOMIC id="687" children="686">
+																						<VNAME id="686" children="685">
+																							<tokenv id="685" children="">V_c</tokenv>
+																						</VNAME>
+																					</ATOMIC>
+																				</ARG>
+																				<res_key id="689" children="">)</res_key>
+																			</OP>
+																		</TERM>
+																	</ASSIGN>
+																</COMMAND>
+																<res_key id="694" children="">;</res_key>
+																<INSTRUC id="726" children="716,717,725">
+																	<COMMAND id="716" children="715">
+																		<ASSIGN id="715" children="696,697,714">
+																			<VNAME id="696" children="695">
+																				<tokenv id="695" children="">V_result</tokenv>
+																			</VNAME>
+																			<res_key id="697" children="">=</res_key>
+																			<TERM id="714" children="713">
+																				<CALL id="713" children="699,700,703,704,707,708,711,712">
+																					<FNAME id="699" children="698">
+																						<tokenf id="698" children="">F_test2</tokenf>
+																					</FNAME>
+																					<res_key id="700" children="">(</res_key>
+																					<ATOMIC id="703" children="702">
+																						<VNAME id="702" children="701">
+																							<tokenv id="701" children="">V_result</tokenv>
+																						</VNAME>
+																					</ATOMIC>
+																					<res_key id="704" children="">,</res_key>
+																					<ATOMIC id="707" children="706">
+																						<CONST id="706" children="705">
+																							<tokenn id="705" children="">2</tokenn>
+																						</CONST>
+																					</ATOMIC>
+																					<res_key id="708" children="">,</res_key>
+																					<ATOMIC id="711" children="710">
+																						<CONST id="710" children="709">
+																							<tokenn id="709" children="">5</tokenn>
+																						</CONST>
+																					</ATOMIC>
+																					<res_key id="712" children="">)</res_key>
+																				</CALL>
+																			</TERM>
+																		</ASSIGN>
+																	</COMMAND>
+																	<res_key id="717" children="">;</res_key>
+																	<INSTRUC id="725" children="722,723,724">
+																		<COMMAND id="722" children="718,721">
+																			<res_key id="718" children="">return</res_key>
+																			<ATOMIC id="721" children="720">
+																				<VNAME id="720" children="719">
+																					<tokenv id="719" children="">V_result</tokenv>
+																				</VNAME>
+																			</ATOMIC>
+																		</COMMAND>
+																		<res_key id="723" children="">;</res_key>
+																		<INSTRUC id="724" children="">
+																		</INSTRUC>
+																	</INSTRUC>
+																</INSTRUC>
+															</INSTRUC>
+														</INSTRUC>
+														<res_key id="729" children="">end</res_key>
+													</ALGO>
+													<EPILOG id="732" children="731">
+														<res_key id="731" children="">}</res_key>
+													</EPILOG>
+													<SUBFUNCS id="734" children="733">
+														<FUNCTIONS id="733" children="">
+														</FUNCTIONS>
+													</SUBFUNCS>
+													<res_key id="735" children="">end</res_key>
+												</BODY>
+											</DECL>
+											<FUNCTIONS id="738" children="">
+											</FUNCTIONS>
+										</FUNCTIONS>
+									</SUBFUNCS>
+									<res_key id="741" children="">end</res_key>
+								</BODY>
+							</DECL>
+							<FUNCTIONS id="744" children="">
+							</FUNCTIONS>
 						</FUNCTIONS>
 					</SUBFUNCS>
-					<res_key id="507" children="">end</res_key>
+					<res_key id="747" children="">end</res_key>
 				</BODY>
 			</DECL>
-			<FUNCTIONS id="510" children="">
+			<FUNCTIONS id="750" children="">
 			</FUNCTIONS>
 		</FUNCTIONS>
 	</FUNCTIONS>

@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-
 public class ScopeAnalyzer {
     private Map<String, SymbolInfo> symbolTable = new HashMap<>();
     private int uniqueIdCounter = 0;
@@ -103,7 +102,6 @@ public class ScopeAnalyzer {
             if (typeEncountered != null && findDeclaredVariableNameInScope(value, currentScope) != null) {
                 throw new RuntimeException("Error: Variable '" + value + "' redeclared in scope " + currentScope.getId());
             }
-            node.setValue(declaredName); // Use the previously declared variable name
             System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
             symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
         } else {
@@ -112,7 +110,6 @@ public class ScopeAnalyzer {
                 String uniqueName = generateUniqueName("v");
                 symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
                 currentScope.addVariable(value, uniqueName); // Add variable to the current scope
-                node.setValue(uniqueName); // Rename the variable in the parse tree
                 System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
                 typeEncountered = null; // Clear the type after declaration
             } else {
@@ -129,8 +126,11 @@ public class ScopeAnalyzer {
             String uniqueName = generateUniqueName("f");
             symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
             currentScope.addFunction(value, uniqueName); // Add function to the current scope
-            node.setValue(uniqueName); // Rename the function in the parse tree
-            currentScope.removeCallWithoutDeclaration(value); // Remove the call from the list of calls without declaration
+            List<Parser.XMLParseTree> callsWithoutDeclarations = currentScope.getCallsWithoutDeclarations(value);
+            for (Parser.XMLParseTree call : callsWithoutDeclarations) {
+                symbolTable.get(uniqueName).addTreeId(call.getId());
+                currentScope.removeCallWithoutDeclaration(call);
+            }
             scopeStack.push(new Scope(node.getId(), value)); // Enter a new scope for the function body
             System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
             typeEncountered = null; // Clear the type after function declaration
@@ -139,18 +139,19 @@ public class ScopeAnalyzer {
             String declaredName = findDeclaredFunctionNameInScope(value, currentScope);
             // Check if the function has already been declared in the current scope
             if (declaredName != null) {
-                node.setValue(declaredName); // Use the previously declared function name
                 System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
             }
             //Recursive case
             if (scopeStack.peek().getName().equals(value) && !value.equals("F_main")) {
-                node.setValue(value);
                 System.out.println("Using declared function '" + value + "' for '" + value + "' in scope " + currentScope.getId());
-                symbolTable.get(value).addTreeId(node.getId());
+                Scope parentScope = scopeStack.pop();
+                String parentUniqueName = scopeStack.peek().getFunction(value);
+                scopeStack.push(parentScope);
+                symbolTable.get(parentUniqueName).addTreeId(node.getId());
             }
             else {
-                currentScope.addCallWithoutDeclaration(value);
+                currentScope.addCallWithoutDeclaration(node);
             }
         }
     }
@@ -190,7 +191,7 @@ public class ScopeAnalyzer {
             SymbolInfo info = entry.getValue();
             System.out.println("Name: " + entry.getKey() + ", Original Name: " + info.getOriginalName() + 
                                ", Scope: " + info.getScopeId() + ", Type: " + info.getType() + 
-                               ", Tree ID: " + info.getTreeIds());
+                               ", Tree ID: " + info.getTreeIds() + ", Declaration ID: " + info.getDeclarationID());
         }
     }
 
@@ -199,6 +200,7 @@ public class ScopeAnalyzer {
         private String originalName; // The original name of the symbol (variable or function)
         private int scopeId; // The scope in which the symbol is declared
         private String type; // The type of the symbol (e.g., "text", "num")
+        private int declarationID; // The ID of the declaration node
         private List<Integer> treeIds; // The tree IDs where the symbol is used
 
         public SymbolInfo(String originalName, int scopeId, String type, int treeId) {
@@ -206,7 +208,7 @@ public class ScopeAnalyzer {
             this.scopeId = scopeId;
             this.type = type;
             this.treeIds = new ArrayList<>();
-            treeIds.add(treeId);
+            declarationID = treeId;
         }
 
         public String getOriginalName() {
@@ -224,6 +226,9 @@ public class ScopeAnalyzer {
         public List<Integer> getTreeIds() {
             return treeIds;
         }
+        public int getDeclarationID() {
+            return declarationID;
+        }
         public void addTreeId(int treeId) {
             treeIds.add(treeId);
         }
@@ -233,7 +238,7 @@ public class ScopeAnalyzer {
     private static class Scope {
         private int id;
         private String name;
-        private List<String> callsWithoutDeclarations = new ArrayList<>();
+        private List<Parser.XMLParseTree> callsWithoutDeclarations = new ArrayList<>();
         private Map<String, String> variables = new HashMap<>();
         private Map<String, String> functions = new HashMap<>();
 
@@ -264,17 +269,23 @@ public class ScopeAnalyzer {
         public String getFunction(String originalName) {
             return functions.get(originalName);
         }
-        public void addCallWithoutDeclaration(String name) {
-            callsWithoutDeclarations.add(name);
+        public void addCallWithoutDeclaration(Parser.XMLParseTree node) {
+            callsWithoutDeclarations.add(node);
         }
-        public void removeCallWithoutDeclaration(String name) {
-            try {
-                callsWithoutDeclarations.remove(name);
-            } catch (Exception e) {
-            }
+        public void removeCallWithoutDeclaration(Parser.XMLParseTree node) {
+            callsWithoutDeclarations.remove(node);
         }
-        public List<String> getCallsWithoutDeclarations() {
+        public List<Parser.XMLParseTree> getCallsWithoutDeclarations() {
             return callsWithoutDeclarations;
+        }
+        public List<Parser.XMLParseTree> getCallsWithoutDeclarations(String name) {
+            List<Parser.XMLParseTree> calls = new ArrayList<>();
+            for (Parser.XMLParseTree call : callsWithoutDeclarations) {
+                if (call.getValue().equals(name)) {
+                    calls.add(call);
+                }
+            }
+            return calls;
         }
     }
 }

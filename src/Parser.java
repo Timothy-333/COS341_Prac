@@ -112,9 +112,6 @@ public class Parser {
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
-                    xmlFileBody = root.toString();
-                    xmlFile = xmlFileHeader + xmlFileBody;
-                    writeToFile("scopeResult.xml",xmlFile);
                 
                     return;
                 } else {

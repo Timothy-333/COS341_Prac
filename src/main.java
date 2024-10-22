@@ -2,7 +2,7 @@ import java.util.*;
 public class main {
     public static void main(String[] args) {
         String text = "main\n" + //
-                        "num V_x , text V_y , num V_a , num V_main , num V_c ,\n" + //
+                        "num V_x , text V_y , num V_a , num V_b , num V_c ,\n" + //
                         "begin\n" + //
                         "  V_x < input ;\n" + //
                         "  V_y = \"Hello\" ;\n" + //
@@ -27,6 +27,7 @@ public class main {
                         "  begin\n" + //
                         "    V_result = add ( V_a , V_b ) ;\n" + //
                         "    V_result = sub ( V_result , V_c ) ;\n" + //
+                        "    V_result = F_test ( V_result , 2 , 5 ) ;\n" + //
                         "    return V_result ;\n" + //
                         "end\n" + //
                         "}\n" + //

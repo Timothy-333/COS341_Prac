@@ -45,7 +45,6 @@ public class ScopeAnalyzer {
         }
         // Check for conflicts
         for (String varName : variableNames.keySet()) {
-            System.out.println("Checking for conflicts with variable '" + varName + "'");
             if (functionNames.containsKey(varName)) {
                 throw new RuntimeException("Error: Name conflict between variable '" + varName + "' and function '" + varName + "'");
             }
@@ -83,10 +82,12 @@ public class ScopeAnalyzer {
 
             if (tag.equals("tokenv")) {
                 handleVariable(node, value, currentScope);
+                typeEncountered = null; // Clear the type after variable declaration
             } 
             // Handle function declaration or usage
             else if (tag.equals("tokenf")) {
                 handleFunction(node, value, currentScope);
+                typeEncountered = null; // Clear the type after function declaration
             }
         }
     }
@@ -99,25 +100,35 @@ public class ScopeAnalyzer {
         }
         // Check if the variable has already been declared
         if (declaredName != null) {
-            if (typeEncountered != null && findDeclaredVariableNameInScope(value, currentScope) != null) {
-                throw new RuntimeException("Error: Variable '" + value + "' redeclared in scope " + currentScope.getId());
+            if (typeEncountered != null) {
+                if(findDeclaredVariableNameInScope(value, currentScope) == null) {
+                    declareVariable(node, value, currentScope);
+                }
+                else {
+                    throw new RuntimeException("Error: Variable '" + value + "' redeclared in scope " + currentScope.getId());
+                }
             }
-            System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
-            symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
+            else
+            {
+                System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
+                symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
+            }
         } else {
             // If the variable has not been declared, and a type is encountered, declare it
             if (typeEncountered != null) {
-                String uniqueName = generateUniqueName("v");
-                symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
-                currentScope.addVariable(value, uniqueName); // Add variable to the current scope
-                System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
-                typeEncountered = null; // Clear the type after declaration
+                declareVariable(node, value, currentScope);
             } else {
                 throw new RuntimeException("Error: Variable '" + value + "' used without declaration in scope " + currentScope.getId());
             }
         }
     }
-
+    private void declareVariable(Parser.XMLParseTree node, String value, Scope currentScope) {
+        String uniqueName = generateUniqueName("v");
+        symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
+        currentScope.addVariable(value, uniqueName); // Add variable to the current scope
+        System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+        typeEncountered = null; // Clear the type after declaration
+    }
     private void handleFunction(Parser.XMLParseTree node, String value, Scope currentScope) {
         if (typeEncountered != null) {
             if (findDeclaredFunctionNameInScope(value, currentScope) != null || scopeStack.peek().getName().equals(value)) {
@@ -187,11 +198,13 @@ public class ScopeAnalyzer {
     // Prints the contents of the symbol table for debugging purposes
     public void printSymbolTable() {
         System.out.println("Symbol Table:");
+        System.out.printf("%-15s %-20s %-10s %-10s %-15s %-20s%n", "Name", "Original Name", "Scope", "Type", "Declaration ID", "Tree IDs");
+        System.out.println("---------------------------------------------------------------------------------------------");
         for (Map.Entry<String, SymbolInfo> entry : symbolTable.entrySet()) {
             SymbolInfo info = entry.getValue();
-            System.out.println("Name: " + entry.getKey() + ", Original Name: " + info.getOriginalName() + 
-                               ", Scope: " + info.getScopeId() + ", Type: " + info.getType() + 
-                               ", Tree ID: " + info.getTreeIds() + ", Declaration ID: " + info.getDeclarationID());
+            System.out.printf("%-15s %-20s %-10d %-10s %-15d %-20s%n", 
+                      entry.getKey(), info.getOriginalName(), info.getScopeId(), info.getType(), 
+                      info.getDeclarationID(), info.getTreeIds());
         }
     }
 

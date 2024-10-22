@@ -23,7 +23,7 @@ public class main {
                         "{\n" + //
                         "  num V_result ,\n" + //
                         "  text V_d ,\n" + //
-                        "  num V_e ,\n" + //
+                        "  num V_y ,\n" + //
                         "  begin\n" + //
                         "    V_result = add ( V_a , V_b ) ;\n" + //
                         "    V_result = sub ( V_result , V_c ) ;\n" + //

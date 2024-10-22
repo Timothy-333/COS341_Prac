@@ -76,6 +76,9 @@ public class ScopeAnalyzer {
             }
             else if(value.equals("end") && scopeStack.peek().isClosingBracketEncountered())
             {
+                if (!scopeStack.peek().getCallsWithoutDeclarations().isEmpty()) {
+                    throw new RuntimeException("Error: Function '" + scopeStack.peek().getCallsWithoutDeclarations() + "' called without declaration in scope " + scopeStack.peek().getId());
+                }
                 scopeStack.pop();
             }
         }
@@ -146,25 +149,19 @@ public class ScopeAnalyzer {
                 currentScope.removeCallWithoutDeclaration(call);
             }
             scopeStack.push(new Scope(node.getId(), value)); // Enter a new scope for the function body
+            scopeStack.peek().addFunction(value, uniqueName);
             System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
             typeEncountered = null; // Clear the type after function declaration
         }
         else {
             String declaredName = findDeclaredFunctionNameInScope(value, currentScope);
             // Check if the function has already been declared in the current scope
-            if (declaredName != null) {
+            if (declaredName != null && !value.equals("F_main")) {
                 System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
             }
-            //Recursive case
-            if (scopeStack.peek().getName().equals(value) && !value.equals("F_main")) {
-                System.out.println("Using declared function '" + value + "' for '" + value + "' in scope " + currentScope.getId());
-                Scope parentScope = scopeStack.pop();
-                String parentUniqueName = scopeStack.peek().getFunction(value);
-                scopeStack.push(parentScope);
-                symbolTable.get(parentUniqueName).addTreeId(node.getId());
-            }
             else {
+                System.out.println("Function '" + value + "' called without declaration in scope " + currentScope.getId());
                 currentScope.addCallWithoutDeclaration(node);
             }
         }

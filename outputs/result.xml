@@ -732,7 +732,7 @@
 											<TERM id="486" children="485">
 												<CALL id="485" children="471,472,475,476,479,480,483,484">
 													<FNAME id="471" children="470">
-														<tokenf id="470" children="">F_test3</tokenf>
+														<tokenf id="470" children="">F_test</tokenf>
 													</FNAME>
 													<res_key id="472" children="">(</res_key>
 													<ATOMIC id="475" children="474">

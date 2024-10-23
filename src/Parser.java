@@ -94,17 +94,8 @@ public class Parser {
                     while (!temp.isEmpty()) {
                         this.root.addChild(temp.pop());
                     }
-
-
-
-                    String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
                     String xmlFileBody = root.toString();
-                    String xmlFile = xmlFileHeader + xmlFileBody;
-
-                    System.out.println("XML Parse Tree:");
-                    // System.out.println(xmlFile);
-
-                    writeToFile("result.xml",xmlFile);
+                    writeToFile("result.xml",xmlFileBody);
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
@@ -243,7 +234,7 @@ public class Parser {
             private String value;
             private int id;
             private Map<String, String> attributes; // Add attributes map
-    
+
             public XMLParseTree(String tag, int id) {
                 this.id = id;
                 this.tag = tag;
@@ -343,7 +334,8 @@ public class Parser {
         // Defining the folder and file path
         String folderPath = "outputs/";
         File folder = new File(folderPath);
-
+        String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
+        root = xmlFileHeader + root;
         // Create the folder if it doesn't exist
         if (!folder.exists()) {
             boolean isCreated = folder.mkdirs();

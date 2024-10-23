@@ -88,7 +88,6 @@ public class ScopeAnalyzer {
         }
         if (tag.equals("tokenv") || tag.equals("tokenf")) {
             Scope currentScope = scopeStack.peek(); // Get the current scope
-            System.out.println("Processing node with tag: " + tag + ", value: " + value);
 
             if (tag.equals("tokenv")) {
                 handleVariable(node, value, currentScope);
@@ -120,7 +119,7 @@ public class ScopeAnalyzer {
             }
             else
             {
-                System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
+                // System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
                 node.setValue(declaredName); // Update the value of the node to the unique name
             }
@@ -137,7 +136,7 @@ public class ScopeAnalyzer {
         String uniqueName = generateUniqueName("v");
         symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
         currentScope.addVariable(value, uniqueName); // Add variable to the current scope
-        System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+        // System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
         node.setValue(uniqueName); // Update the value of the node to the unique name
         typeEncountered = null; // Clear the type after declaration
     }
@@ -157,7 +156,7 @@ public class ScopeAnalyzer {
             }
             scopeStack.push(new Scope(node.getId(), value)); // Enter a new scope for the function body
             scopeStack.peek().addFunction(value, uniqueName);
-            System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+            // System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
             node.setValue(uniqueName); // Update the value of the node to the unique name
             typeEncountered = null; // Clear the type after function declaration
         }
@@ -165,12 +164,12 @@ public class ScopeAnalyzer {
             String declaredName = findDeclaredFunctionNameInScope(value, currentScope);
             // Check if the function has already been declared in the current scope
             if (declaredName != null && !value.equals("F_main")) {
-                System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
+                // System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
                 node.setValue(declaredName); // Update the value of the node to the unique name
             }
             else {
-                System.out.println("Function '" + value + "' called without declaration in scope " + currentScope.getId());
+                // System.out.println("Function '" + value + "' called without declaration in scope " + currentScope.getId());
                 currentScope.addCallWithoutDeclaration(node);
             }
         }
@@ -304,7 +303,6 @@ public class ScopeAnalyzer {
             for (Parser.XMLParseTree call : callsWithoutDeclarations) {
                 if (call.getValue().equals(name)) {
                     calls.add(call);
-                    System.out.println("Found call without declaration for '" + name + "' in scope " + id);
                 }
             }
             return calls;

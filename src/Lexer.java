@@ -65,7 +65,7 @@ public class Lexer {
                 } else if (isNumber(token)) {
                     tokenList.add(new TokenClass(TokenClassType.tokenn, token));
                 } else {
-                    throw new RuntimeException("Invalid token: " + token);
+                    throw new RuntimeException("Invalid token: " + token + " at line " + scanner.match().start());
                 }
             }
             scanner.close();

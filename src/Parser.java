@@ -105,14 +105,6 @@ public class Parser {
                     // System.out.println(xmlFile);
 
                     writeToFile("result.xml",xmlFile);
-                    ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
-                    try {
-                        scopeAnalyzer.analyze(getRoot());
-                        scopeAnalyzer.printSymbolTable();
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
@@ -341,9 +333,13 @@ public class Parser {
             public int getId() {
                 return id;
             }
+
+            public Parser.XMLParseTree getChild(int i) {
+                return children.get(i);
+            }
         }
 
-    public void writeToFile(String fileName, String root) {
+    public static void writeToFile(String fileName, String root) {
         // Defining the folder and file path
         String folderPath = "outputs/";
         File folder = new File(folderPath);

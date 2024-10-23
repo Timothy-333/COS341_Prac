@@ -2,6 +2,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class ScopeAnalyzer {
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
     // Entry point for analysis
-    public void analyze(Parser.XMLParseTree root) {
+    public Map<String, SymbolInfo> analyze(Parser.XMLParseTree root) {
         System.out.println("Starting analysis...");
         scopeStack.push(new Scope(root.getId(), "F_main")); // Initialize scope with the root's ID
         traverseTree(root); // Start traversal from the root of the parse tree
@@ -28,8 +30,10 @@ public class ScopeAnalyzer {
         checkForNameConflicts();
     
         System.out.println("Analysis complete.");
+        System.out.println("Genrating XML file...");
+        Parser.writeToFile("scopeResult.xml", root.toString());
+        return symbolTable;
     }
-    
     private void checkForNameConflicts() {
         Map<String, String> variableNames = new HashMap<>();
         Map<String, String> functionNames = new HashMap<>();
@@ -67,7 +71,7 @@ public class ScopeAnalyzer {
         String tag = node.getTag();
         String value = node.getValue();
         if (tag.equals("res_key")) {
-            if((value.equals("text") || value.equals("num")))
+            if((value.equals("text") || value.equals("num") || value.equals("void")))
                 typeEncountered = value; // Set the current type to be encountered
             else if(value.equals("}"))
             {
@@ -118,6 +122,7 @@ public class ScopeAnalyzer {
             {
                 System.out.println("Using declared variable '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
+                node.setValue(declaredName); // Update the value of the node to the unique name
             }
         } else {
             // If the variable has not been declared, and a type is encountered, declare it
@@ -133,6 +138,7 @@ public class ScopeAnalyzer {
         symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
         currentScope.addVariable(value, uniqueName); // Add variable to the current scope
         System.out.println("Declared variable '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+        node.setValue(uniqueName); // Update the value of the node to the unique name
         typeEncountered = null; // Clear the type after declaration
     }
     private void handleFunction(Parser.XMLParseTree node, String value, Scope currentScope) {
@@ -146,11 +152,13 @@ public class ScopeAnalyzer {
             List<Parser.XMLParseTree> callsWithoutDeclarations = currentScope.getCallsWithoutDeclarations(value);
             for (Parser.XMLParseTree call : callsWithoutDeclarations) {
                 symbolTable.get(uniqueName).addTreeId(call.getId());
+                call.setValue(uniqueName); // Update the value of the node to the unique name
                 currentScope.removeCallWithoutDeclaration(call);
             }
             scopeStack.push(new Scope(node.getId(), value)); // Enter a new scope for the function body
             scopeStack.peek().addFunction(value, uniqueName);
             System.out.println("Declared and renamed function '" + value + "' to '" + uniqueName + "' in scope " + currentScope.getId());
+            node.setValue(uniqueName); // Update the value of the node to the unique name
             typeEncountered = null; // Clear the type after function declaration
         }
         else {
@@ -159,6 +167,7 @@ public class ScopeAnalyzer {
             if (declaredName != null && !value.equals("F_main")) {
                 System.out.println("Using declared function '" + declaredName + "' for '" + value + "' in scope " + currentScope.getId());
                 symbolTable.get(declaredName).addTreeId(node.getId()); // Add the tree ID to the symbol's list
+                node.setValue(declaredName); // Update the value of the node to the unique name
             }
             else {
                 System.out.println("Function '" + value + "' called without declaration in scope " + currentScope.getId());

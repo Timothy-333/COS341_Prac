@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.*;
 
 public class Parser {
@@ -11,7 +13,12 @@ public class Parser {
     public Parser(List<TokenClass> tokenList) {
         this.tokenList = tokenList;
     }
-
+    public XMLParseTree getRoot() {
+        if (root == null) {
+            throw new RuntimeException("Parsing has not been completed yet");
+        }
+        return root;
+    }
     public void parse() {
         Stack<Integer> stateStack = new Stack<>();
         Stack<Object> semanticStack = new Stack<>();
@@ -100,15 +107,22 @@ public class Parser {
                     String xmlFile = xmlFileHeader + xmlFileBody;
 
                     System.out.println("XML Parse Tree:");
-                    System.out.println(xmlFile);
+                    // System.out.println(xmlFile);
 
                     writeToFile("result.xml",xmlFile);
+                    ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+                    try {
+                        scopeAnalyzer.analyze(getRoot());
+                        scopeAnalyzer.printSymbolTable();
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
                 }
-                System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
+                // System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
             }
         } catch (Exception e) {
             System.err.println("Error during parsing: " + e.getMessage());
@@ -132,7 +146,7 @@ public class Parser {
 
     private int getGoto(int state, String nonTerminal) {
         int columnIndex = getColumnIndex(nonTerminal);
-        System.out.println("State: " + state + ", Non-terminal: " + nonTerminal + ", Column index: " + columnIndex);
+        // System.out.println("State: " + state + ", Non-terminal: " + nonTerminal + ", Column index: " + columnIndex);
         String value = SLRParseTable.PARSE_TABLE[state][columnIndex];
         if (value == null) {
             // Handle nullable non-terminal case

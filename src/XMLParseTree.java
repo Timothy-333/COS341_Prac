@@ -5,6 +5,7 @@ public class XMLParseTree {
     private List<XMLParseTree> children;
     private String value;
     private int id;
+    private XMLParseTree parent;
 
     public XMLParseTree(String tag, int id) {
         this.id = id;
@@ -13,6 +14,7 @@ public class XMLParseTree {
     }
 
     public void addChild(XMLParseTree child) {
+        child.setParent(this);
         children.add(child);
     }
 
@@ -23,6 +25,16 @@ public class XMLParseTree {
     public String getValue(){
         return value;
     }
+
+    
+    public XMLParseTree getParent() {
+        return parent;
+    }
+
+    public void setParent(XMLParseTree parent) {
+        this.parent = parent;
+    }
+
 
     public List<XMLParseTree> getChildren(){
         return children;

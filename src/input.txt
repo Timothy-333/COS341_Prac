@@ -3,7 +3,7 @@ num V_x , text V_y , num V_a , num V_b , num V_c ,
 begin
     V_x < input ;
     V_y = "Hello" ;
-    if grt ( V_x , 0 ) then
+    if and  ( grt  ( V_b , V_c )  , eq  ( V_a , 10 )  )  then
         begin
             print V_y ;
             print V_x ;

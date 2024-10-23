@@ -10,20 +10,10 @@ TypeChecker() {
 TypeChecker(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable) {
     this.symbolTable = symbolTable;
 }
-public String findSymbolType(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, int declaredID) {
-    for (Map.Entry<String, ScopeAnalyzer.SymbolInfo> entry : symbolTable.entrySet()) {
-        ScopeAnalyzer.SymbolInfo info = entry.getValue();
-        if(null==info){
-            System.err.println("GOD PLEASE HELP ME!");
-        }
-        if (info.getDeclarationID() == declaredID) {
-            System.out.println("HOORAY, IT WORKED!");
-            return info.getType();
-    }
-    
-}
-   throw new RuntimeException("Symbol was not found in the symbol table");
-}
+public String findSymbolType(String symbol) {
+    return  symbolTable.get(symbol).getType(); 
+}   
+
  public boolean typeCheck(XMLParseTree xml) {
     String tag = xml.getTag();
     
@@ -196,9 +186,9 @@ public String findSymbolType(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, 
          break;
 
         case "VNAME":
-        if(findSymbolType(symbolTable, children.get(0).getId())=="text"){
+        if(findSymbolType(children.get(0).getValue())=="text"){
             return 't';
-        }else if(findSymbolType(symbolTable,children. get(0).getId())=="num"){
+        }else if(findSymbolType(children.get(0).getValue())=="num"){
             return 'n';
         }
         break;
@@ -287,9 +277,9 @@ public String findSymbolType(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, 
         return typeOf(children.get(0));
 
         case "FNAME":
-        if(findSymbolType(symbolTable, children.get(0).getId())=="void"){
+        if(findSymbolType(children.get(0).getValue())=="void"){
             return 'v';
-        }else if(findSymbolType(symbolTable,children. get(0).getId())=="num"){
+        }else if(findSymbolType(children.get(0).getValue())=="num"){
             return 'n';
         }
         break;

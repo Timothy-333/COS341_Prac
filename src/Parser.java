@@ -251,7 +251,7 @@ public class Parser {
         new Rule("SUBFUNCS", Arrays.asList("FUNCTIONS"))
     ));
 
-public void writeToFile(String fileName, String root) {
+public static void writeToFile(String fileName, String root) {
     // Defining the folder and file path
     String folderPath = "outputs/";
     File folder = new File(folderPath);

@@ -35,6 +35,9 @@ public class XMLParseTree {
         this.parent = parent;
     }
 
+    public int getId(){
+        return id;
+    }
 
     public List<XMLParseTree> getChildren(){
         return children;

@@ -1,161 +1,104 @@
 import java.util.*;
+import java.util.regex.*;
 
 public class Lexer {
-    public String text;
-    public int pos;
-    public List<TokenClass> tokenList = new ArrayList<TokenClass>();
+    private String text;
+    private List<TokenClass> tokenList = new ArrayList<TokenClass>();
 
     public enum TokenClassType {
-        T,
-        N,
-        F,
-        V,
-        res_key
+        tokent,
+        tokenn,
+        tokenf,
+        tokenv,
+        res_key,
+        $
+    };
+    public enum TokenClassKeyword {
+        MAIN,
+        NUM,
+        TEXT,
+        BEGIN,
+        END,
+        SKIP,
+        HALT,
+        PRINT,
+        INPUT,
+        IF,
+        THEN,
+        ELSE,
+        NOT,
+        SQRT,
+        OR,
+        AND,
+        EQ,
+        GRT,
+        ADD,
+        SUB,
+        MUL,
+        DIV,
+        RETURN,
+        VOID
     };
 
-    public TokenClass assignType(TokenClassType type, String word) {
-        switch (type) {
-            case T:
-                return new TokenClass(2, "T", word);
-            case N:
-                return new TokenClass(3, "N", word);
-            case F:
-                return new TokenClass(4, "F", word);
-            case V:
-                return new TokenClass(5, "V", word);
-            case res_key:
-                return new TokenClass(6, "reserved_keyword", word);
-            default:
-                return null;
-        }
-    }
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("V_[a-z]([a-z]|[0-9])*");
+    private static final Pattern FUNCTION_PATTERN = Pattern.compile("F_[a-z]([a-z]|[0-9])*");
+    private static final Pattern TEXT_PATTERN = Pattern.compile("\"[A-Z][a-z]{0,7}\"");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("0|0\\.([0-9])*|\\-0\\.([0-9])*|[1-9]([0-9])*|\\-[1-9]([0-9])*|[1-9]([0-9])*\\.([0-9])*|\\-[1-9]([0-9])*\\.([0-9])*");
 
     public Lexer(String text) {
         this.text = text;
-        this.pos = 0;
     }
-
-    public void advance() {
-        pos++; // Move 1 character forward in the text
-    }
-
-    public void lex() {
-        String textBuilder = "";
-        while (pos < text.length()) {
-            switch (text.charAt(pos)) { // If the character is whitespace simply move 1 character forward
-                case ' ':
-                    advance();
-                    break;
-                case '\n':
-                    advance();
-                    break;
-                case '\t':
-                    advance();
-                    break;
-
-                // Reserved_Keyword Tokens
-                case '{':
-                    tokenList.add(assignType(TokenClassType.res_key, "{"));
-                    advance();
-                    break;
-                case '}':
-                    tokenList.add(assignType(TokenClassType.res_key, "}"));
-                    advance();
-                case '(':
-                    tokenList.add(assignType(TokenClassType.res_key, "("));
-                    advance();
-                    break;
-                case ')':
-                    tokenList.add(assignType(TokenClassType.res_key, ")"));
-                    advance();
-                case '=':
-                    tokenList.add(assignType(TokenClassType.res_key, "="));
-                    advance();
-                    break;
-                case ',':
-                    tokenList.add(assignType(TokenClassType.res_key, ","));
-                    advance();
-                    break;
-                // Multi-character tokens for reserved_keyword
-                case 'a':
-                    textBuilder += text.substring(pos, pos + 1);
-                    advance();
-                    switch (text.charAt(pos)) {
-                        case 'n':
-                            textBuilder += text.substring(pos, pos + 1);
-                            advance();
-                            switch (text.charAt(pos)) {
-                                case 'd':
-                                    textBuilder += text.substring(pos, pos + 1);
-                                    advance();
-                                    tokenList.add(assignType(TokenClassType.res_key, textBuilder)); // Built text
-                                    // Clearing textBuilder
-                                    textBuilder = "";
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-
-                        default:
-                            // Throw Error :Incomplete Keyword
-                            break;
-                    }
-                case 'e':
-                    textBuilder += text.substring(pos, pos + 1);
-                    advance();
-                    switch (text.charAt(pos)) {
-                        case 'n':
-                            textBuilder += text.substring(pos, pos + 1);
-                            advance();
-                            switch (text.charAt(pos)) {
-                                case 'd':
-                                    textBuilder += text.substring(pos, pos + 1);
-                                    advance();
-                                    tokenList.add(assignType(TokenClassType.res_key, textBuilder)); // Built text
-                                    textBuilder = ""; // Clearing textBuilder
-                                    break;
-                                default:
-                                    // Throw Error :Incomplete Keyword
-                                    break;
-                            }
-                            break;
-                        case 'l':
-                            textBuilder += text.substring(pos, pos + 1);
-                            advance();
-                            switch (text.charAt(pos)) {
-                                case 's':
-                                    textBuilder += text.substring(pos, pos + 1);
-                                    advance();
-                                    switch (text.charAt(pos)) {
-                                        case 'e':
-                                            tokenList.add(assignType(TokenClassType.res_key, textBuilder)); // Built
-                                                                                                            // text
-                                            textBuilder = ""; // Clearing textBuilder
-                                            break;
-                                        default:
-                                            // Throw Error :Incomplete Keyword
-                                            break;
-                                    }
-                                    break;
-                                default:
-                                    // Throw Error :Incomplete Keyword
-                                    break;
-                            }
-                            break;
-                        case 'q':
-                            textBuilder += text.substring(pos, pos + 1);
-                            tokenList.add(assignType(TokenClassType.res_key, textBuilder)); // Built text
-                            textBuilder = ""; // Clearing textBuilder
-                            advance();
-                        default:
-                            // Throw Error :Incomplete Keyword
-                            break;
-                    }
-                default:
-                    // Throw Error :Incomplete/Invalid Token
-                    break;
+    public List<TokenClass> lex() {
+        try (Scanner scanner = new Scanner(text)) {
+            while (scanner.hasNext()) {
+                String token = scanner.next();
+                if (token.length() == 1 && isSingleCharacterToken(token.charAt(0))) {
+                    tokenList.add(new TokenClass(TokenClassType.res_key, token));
+                } else if (token.startsWith("V_") && isVariable(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenv, token));
+                } else if (token.startsWith("F_") && isFunction(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenf, token));
+                } else if (isKeyword(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.res_key, token));
+                } else if (isText(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokent, token));
+                } else if (isNumber(token)) {
+                    tokenList.add(new TokenClass(TokenClassType.tokenn, token));
+                } else {
+                    throw new RuntimeException("Invalid token: " + token);
+                }
             }
+            scanner.close();
         }
+        return tokenList;
+    }
+
+    public static boolean isKeyword(String word) {
+        try {
+            TokenClassKeyword.valueOf(word.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private boolean isSingleCharacterToken(char ch) {
+        return "{}()=,;<".indexOf(ch) != -1;
+    }
+
+    private boolean isVariable(String token) {
+        return VARIABLE_PATTERN.matcher(token).matches();
+    }
+
+    private boolean isFunction(String token) {
+        return FUNCTION_PATTERN.matcher(token).matches();
+    }
+
+    private boolean isText(String token) {
+        return TEXT_PATTERN.matcher(token).matches();
+    }
+
+    private boolean isNumber(String token) {
+        return NUMBER_PATTERN.matcher(token).matches();
     }
 }

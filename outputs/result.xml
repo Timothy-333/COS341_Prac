@@ -1,5 +1,5 @@
 <? xml="1.0" encoding="UTF-8" ?>
-<PROG id="418" children="0,19,189,417">
+<PROG id="405" children="0,19,176,404">
 	<res_key id="0" children="">main</res_key>
 	<GLOBVARS id="19" children="2,4,5,18">
 		<VTYP id="2" children="1">
@@ -30,9 +30,9 @@
 			</GLOBVARS>
 		</GLOBVARS>
 	</GLOBVARS>
-	<ALGO id="189" children="20,187,188">
+	<ALGO id="176" children="20,174,175">
 		<res_key id="20" children="">begin</res_key>
-		<INSTRUC id="187" children="42,43,186">
+		<INSTRUC id="174" children="42,43,173">
 			<COMMAND id="42" children="41">
 				<ASSIGN id="41" children="22,23,40">
 					<VNAME id="22" children="21">
@@ -68,7 +68,7 @@
 				</ASSIGN>
 			</COMMAND>
 			<res_key id="43" children="">;</res_key>
-			<INSTRUC id="186" children="52,53,185">
+			<INSTRUC id="173" children="52,53,172">
 				<COMMAND id="52" children="51">
 					<ASSIGN id="51" children="45,46,50">
 						<VNAME id="45" children="44">
@@ -85,7 +85,7 @@
 					</ASSIGN>
 				</COMMAND>
 				<res_key id="53" children="">;</res_key>
-				<INSTRUC id="185" children="62,63,184">
+				<INSTRUC id="172" children="62,63,171">
 					<COMMAND id="62" children="61">
 						<ASSIGN id="61" children="55,56,60">
 							<VNAME id="55" children="54">
@@ -102,7 +102,7 @@
 						</ASSIGN>
 					</COMMAND>
 					<res_key id="63" children="">;</res_key>
-					<INSTRUC id="184" children="105,106,183">
+					<INSTRUC id="171" children="105,106,170">
 						<COMMAND id="105" children="104">
 							<ASSIGN id="104" children="65,66,103">
 								<VNAME id="65" children="64">
@@ -170,15 +170,15 @@
 							</ASSIGN>
 						</COMMAND>
 						<res_key id="106" children="">;</res_key>
-						<INSTRUC id="183" children="180,181,182">
-							<COMMAND id="180" children="179">
-								<BRANCH id="179" children="107,138,139,154,155,178">
+						<INSTRUC id="170" children="167,168,169">
+							<COMMAND id="167" children="166">
+								<BRANCH id="166" children="107,125,126,141,142,165">
 									<res_key id="107" children="">if</res_key>
-									<COND id="138" children="137">
-										<COMPOSIT id="137" children="109,110,122,123,135,136">
-											<BINOP id="109" children="108">
-												<res_key id="108" children="">and</res_key>
-											</BINOP>
+									<COND id="125" children="124">
+										<COMPOSIT id="124" children="109,110,122,123">
+											<UNOP id="109" children="108">
+												<res_key id="108" children="">not</res_key>
+											</UNOP>
 											<res_key id="110" children="">(</res_key>
 											<SIMPLE id="122" children="112,113,116,117,120,121">
 												<BINOP id="112" children="111">
@@ -198,449 +198,430 @@
 												</ATOMIC>
 												<res_key id="121" children="">)</res_key>
 											</SIMPLE>
-											<res_key id="123" children="">,</res_key>
-											<SIMPLE id="135" children="125,126,129,130,133,134">
-												<BINOP id="125" children="124">
-													<res_key id="124" children="">eq</res_key>
-												</BINOP>
-												<res_key id="126" children="">(</res_key>
-												<ATOMIC id="129" children="128">
-													<VNAME id="128" children="127">
-														<tokenv id="127" children="">V_a</tokenv>
-													</VNAME>
-												</ATOMIC>
-												<res_key id="130" children="">,</res_key>
-												<ATOMIC id="133" children="132">
-													<CONST id="132" children="131">
-														<tokenn id="131" children="">10</tokenn>
-													</CONST>
-												</ATOMIC>
-												<res_key id="134" children="">)</res_key>
-											</SIMPLE>
-											<res_key id="136" children="">)</res_key>
+											<res_key id="123" children="">)</res_key>
 										</COMPOSIT>
 									</COND>
-									<res_key id="139" children="">then</res_key>
-									<ALGO id="154" children="140,152,153">
-										<res_key id="140" children="">begin</res_key>
-										<INSTRUC id="152" children="149,150,151">
-											<COMMAND id="149" children="148">
-												<ASSIGN id="148" children="142,143,147">
-													<VNAME id="142" children="141">
-														<tokenv id="141" children="">V_a</tokenv>
+									<res_key id="126" children="">then</res_key>
+									<ALGO id="141" children="127,139,140">
+										<res_key id="127" children="">begin</res_key>
+										<INSTRUC id="139" children="136,137,138">
+											<COMMAND id="136" children="135">
+												<ASSIGN id="135" children="129,130,134">
+													<VNAME id="129" children="128">
+														<tokenv id="128" children="">V_a</tokenv>
 													</VNAME>
-													<res_key id="143" children="">=</res_key>
-													<TERM id="147" children="146">
-														<ATOMIC id="146" children="145">
-															<CONST id="145" children="144">
-																<tokenn id="144" children="">100</tokenn>
+													<res_key id="130" children="">=</res_key>
+													<TERM id="134" children="133">
+														<ATOMIC id="133" children="132">
+															<CONST id="132" children="131">
+																<tokenn id="131" children="">100</tokenn>
 															</CONST>
 														</ATOMIC>
 													</TERM>
 												</ASSIGN>
 											</COMMAND>
-											<res_key id="150" children="">;</res_key>
-											<INSTRUC id="151" children="">
+											<res_key id="137" children="">;</res_key>
+											<INSTRUC id="138" children="">
 											</INSTRUC>
 										</INSTRUC>
-										<res_key id="153" children="">end</res_key>
+										<res_key id="140" children="">end</res_key>
 									</ALGO>
-									<res_key id="155" children="">else</res_key>
-									<ALGO id="178" children="156,176,177">
-										<res_key id="156" children="">begin</res_key>
-										<INSTRUC id="176" children="173,174,175">
-											<COMMAND id="173" children="172">
-												<CALL id="172" children="158,159,162,163,166,167,170,171">
-													<FNAME id="158" children="157">
-														<tokenf id="157" children="">F_resetglob</tokenf>
+									<res_key id="142" children="">else</res_key>
+									<ALGO id="165" children="143,163,164">
+										<res_key id="143" children="">begin</res_key>
+										<INSTRUC id="163" children="160,161,162">
+											<COMMAND id="160" children="159">
+												<CALL id="159" children="145,146,149,150,153,154,157,158">
+													<FNAME id="145" children="144">
+														<tokenf id="144" children="">F_resetglob</tokenf>
 													</FNAME>
-													<res_key id="159" children="">(</res_key>
-													<ATOMIC id="162" children="161">
-														<CONST id="161" children="160">
-															<tokenn id="160" children="">0</tokenn>
+													<res_key id="146" children="">(</res_key>
+													<ATOMIC id="149" children="148">
+														<CONST id="148" children="147">
+															<tokenn id="147" children="">0</tokenn>
 														</CONST>
 													</ATOMIC>
-													<res_key id="163" children="">,</res_key>
-													<ATOMIC id="166" children="165">
-														<CONST id="165" children="164">
-															<tokenn id="164" children="">0</tokenn>
+													<res_key id="150" children="">,</res_key>
+													<ATOMIC id="153" children="152">
+														<CONST id="152" children="151">
+															<tokenn id="151" children="">0</tokenn>
 														</CONST>
 													</ATOMIC>
-													<res_key id="167" children="">,</res_key>
-													<ATOMIC id="170" children="169">
-														<CONST id="169" children="168">
-															<tokenn id="168" children="">0</tokenn>
+													<res_key id="154" children="">,</res_key>
+													<ATOMIC id="157" children="156">
+														<CONST id="156" children="155">
+															<tokenn id="155" children="">0</tokenn>
 														</CONST>
 													</ATOMIC>
-													<res_key id="171" children="">)</res_key>
+													<res_key id="158" children="">)</res_key>
 												</CALL>
 											</COMMAND>
-											<res_key id="174" children="">;</res_key>
-											<INSTRUC id="175" children="">
+											<res_key id="161" children="">;</res_key>
+											<INSTRUC id="162" children="">
 											</INSTRUC>
 										</INSTRUC>
-										<res_key id="177" children="">end</res_key>
+										<res_key id="164" children="">end</res_key>
 									</ALGO>
 								</BRANCH>
 							</COMMAND>
-							<res_key id="181" children="">;</res_key>
-							<INSTRUC id="182" children="">
+							<res_key id="168" children="">;</res_key>
+							<INSTRUC id="169" children="">
 							</INSTRUC>
 						</INSTRUC>
 					</INSTRUC>
 				</INSTRUC>
 			</INSTRUC>
 		</INSTRUC>
-		<res_key id="188" children="">end</res_key>
+		<res_key id="175" children="">end</res_key>
 	</ALGO>
-	<FUNCTIONS id="417" children="337,416">
-		<DECL id="337" children="204,336">
-			<HEADER id="204" children="191,193,194,196,197,199,200,202,203">
-				<FTYP id="191" children="190">
-					<res_key id="190" children="">num</res_key>
+	<FUNCTIONS id="404" children="324,403">
+		<DECL id="324" children="191,323">
+			<HEADER id="191" children="178,180,181,183,184,186,187,189,190">
+				<FTYP id="178" children="177">
+					<res_key id="177" children="">num</res_key>
 				</FTYP>
-				<FNAME id="193" children="192">
-					<tokenf id="192" children="">F_func1</tokenf>
+				<FNAME id="180" children="179">
+					<tokenf id="179" children="">F_func1</tokenf>
 				</FNAME>
-				<res_key id="194" children="">(</res_key>
-				<VNAME id="196" children="195">
-					<tokenv id="195" children="">V_a</tokenv>
+				<res_key id="181" children="">(</res_key>
+				<VNAME id="183" children="182">
+					<tokenv id="182" children="">V_a</tokenv>
 				</VNAME>
-				<res_key id="197" children="">,</res_key>
-				<VNAME id="199" children="198">
-					<tokenv id="198" children="">V_b</tokenv>
+				<res_key id="184" children="">,</res_key>
+				<VNAME id="186" children="185">
+					<tokenv id="185" children="">V_b</tokenv>
 				</VNAME>
-				<res_key id="200" children="">,</res_key>
-				<VNAME id="202" children="201">
-					<tokenv id="201" children="">V_c</tokenv>
+				<res_key id="187" children="">,</res_key>
+				<VNAME id="189" children="188">
+					<tokenv id="188" children="">V_c</tokenv>
 				</VNAME>
-				<res_key id="203" children="">)</res_key>
+				<res_key id="190" children="">)</res_key>
 			</HEADER>
-			<BODY id="336" children="206,222,252,254,334,335">
-				<PROLOG id="206" children="205">
-					<res_key id="205" children="">{</res_key>
+			<BODY id="323" children="193,209,239,241,321,322">
+				<PROLOG id="193" children="192">
+					<res_key id="192" children="">{</res_key>
 				</PROLOG>
-				<LOCVARS id="222" children="208,210,211,213,215,216,218,220,221">
-					<VTYP id="208" children="207">
-						<res_key id="207" children="">num</res_key>
+				<LOCVARS id="209" children="195,197,198,200,202,203,205,207,208">
+					<VTYP id="195" children="194">
+						<res_key id="194" children="">num</res_key>
 					</VTYP>
-					<VNAME id="210" children="209">
-						<tokenv id="209" children="">V_d</tokenv>
+					<VNAME id="197" children="196">
+						<tokenv id="196" children="">V_d</tokenv>
 					</VNAME>
-					<res_key id="211" children="">,</res_key>
-					<VTYP id="213" children="212">
-						<res_key id="212" children="">text</res_key>
+					<res_key id="198" children="">,</res_key>
+					<VTYP id="200" children="199">
+						<res_key id="199" children="">text</res_key>
 					</VTYP>
-					<VNAME id="215" children="214">
-						<tokenv id="214" children="">V_e</tokenv>
+					<VNAME id="202" children="201">
+						<tokenv id="201" children="">V_e</tokenv>
 					</VNAME>
-					<res_key id="216" children="">,</res_key>
-					<VTYP id="218" children="217">
-						<res_key id="217" children="">text</res_key>
+					<res_key id="203" children="">,</res_key>
+					<VTYP id="205" children="204">
+						<res_key id="204" children="">text</res_key>
 					</VTYP>
-					<VNAME id="220" children="219">
-						<tokenv id="219" children="">V_f</tokenv>
+					<VNAME id="207" children="206">
+						<tokenv id="206" children="">V_f</tokenv>
 					</VNAME>
-					<res_key id="221" children="">,</res_key>
+					<res_key id="208" children="">,</res_key>
 				</LOCVARS>
-				<ALGO id="252" children="223,250,251">
-					<res_key id="223" children="">begin</res_key>
-					<INSTRUC id="250" children="240,241,249">
-						<COMMAND id="240" children="239">
-							<CALL id="239" children="225,226,229,230,233,234,237,238">
-								<FNAME id="225" children="224">
-									<tokenf id="224" children="">F_resetlocal</tokenf>
+				<ALGO id="239" children="210,237,238">
+					<res_key id="210" children="">begin</res_key>
+					<INSTRUC id="237" children="227,228,236">
+						<COMMAND id="227" children="226">
+							<CALL id="226" children="212,213,216,217,220,221,224,225">
+								<FNAME id="212" children="211">
+									<tokenf id="211" children="">F_resetlocal</tokenf>
 								</FNAME>
-								<res_key id="226" children="">(</res_key>
-								<ATOMIC id="229" children="228">
-									<CONST id="228" children="227">
-										<tokenn id="227" children="">0</tokenn>
+								<res_key id="213" children="">(</res_key>
+								<ATOMIC id="216" children="215">
+									<CONST id="215" children="214">
+										<tokenn id="214" children="">0</tokenn>
 									</CONST>
 								</ATOMIC>
-								<res_key id="230" children="">,</res_key>
-								<ATOMIC id="233" children="232">
-									<CONST id="232" children="231">
-										<tokenn id="231" children="">0</tokenn>
+								<res_key id="217" children="">,</res_key>
+								<ATOMIC id="220" children="219">
+									<CONST id="219" children="218">
+										<tokenn id="218" children="">0</tokenn>
 									</CONST>
 								</ATOMIC>
-								<res_key id="234" children="">,</res_key>
-								<ATOMIC id="237" children="236">
-									<CONST id="236" children="235">
-										<tokenn id="235" children="">0</tokenn>
+								<res_key id="221" children="">,</res_key>
+								<ATOMIC id="224" children="223">
+									<CONST id="223" children="222">
+										<tokenn id="222" children="">0</tokenn>
 									</CONST>
 								</ATOMIC>
-								<res_key id="238" children="">)</res_key>
+								<res_key id="225" children="">)</res_key>
 							</CALL>
 						</COMMAND>
-						<res_key id="241" children="">;</res_key>
-						<INSTRUC id="249" children="246,247,248">
-							<COMMAND id="246" children="242,245">
-								<res_key id="242" children="">return</res_key>
-								<ATOMIC id="245" children="244">
-									<CONST id="244" children="243">
-										<tokenn id="243" children="">100</tokenn>
+						<res_key id="228" children="">;</res_key>
+						<INSTRUC id="236" children="233,234,235">
+							<COMMAND id="233" children="229,232">
+								<res_key id="229" children="">return</res_key>
+								<ATOMIC id="232" children="231">
+									<CONST id="231" children="230">
+										<tokenn id="230" children="">100</tokenn>
 									</CONST>
 								</ATOMIC>
 							</COMMAND>
-							<res_key id="247" children="">;</res_key>
-							<INSTRUC id="248" children="">
+							<res_key id="234" children="">;</res_key>
+							<INSTRUC id="235" children="">
 							</INSTRUC>
 						</INSTRUC>
 					</INSTRUC>
-					<res_key id="251" children="">end</res_key>
+					<res_key id="238" children="">end</res_key>
 				</ALGO>
-				<EPILOG id="254" children="253">
-					<res_key id="253" children="">}</res_key>
+				<EPILOG id="241" children="240">
+					<res_key id="240" children="">}</res_key>
 				</EPILOG>
-				<SUBFUNCS id="334" children="333">
-					<FUNCTIONS id="333" children="331,332">
-						<DECL id="331" children="269,330">
-							<HEADER id="269" children="256,258,259,261,262,264,265,267,268">
-								<FTYP id="256" children="255">
-									<res_key id="255" children="">void</res_key>
+				<SUBFUNCS id="321" children="320">
+					<FUNCTIONS id="320" children="318,319">
+						<DECL id="318" children="256,317">
+							<HEADER id="256" children="243,245,246,248,249,251,252,254,255">
+								<FTYP id="243" children="242">
+									<res_key id="242" children="">void</res_key>
 								</FTYP>
-								<FNAME id="258" children="257">
-									<tokenf id="257" children="">F_resetlocal</tokenf>
+								<FNAME id="245" children="244">
+									<tokenf id="244" children="">F_resetlocal</tokenf>
 								</FNAME>
-								<res_key id="259" children="">(</res_key>
-								<VNAME id="261" children="260">
-									<tokenv id="260" children="">V_a</tokenv>
+								<res_key id="246" children="">(</res_key>
+								<VNAME id="248" children="247">
+									<tokenv id="247" children="">V_a</tokenv>
 								</VNAME>
-								<res_key id="262" children="">,</res_key>
-								<VNAME id="264" children="263">
-									<tokenv id="263" children="">V_b</tokenv>
+								<res_key id="249" children="">,</res_key>
+								<VNAME id="251" children="250">
+									<tokenv id="250" children="">V_b</tokenv>
 								</VNAME>
-								<res_key id="265" children="">,</res_key>
-								<VNAME id="267" children="266">
-									<tokenv id="266" children="">V_c</tokenv>
+								<res_key id="252" children="">,</res_key>
+								<VNAME id="254" children="253">
+									<tokenv id="253" children="">V_c</tokenv>
 								</VNAME>
-								<res_key id="268" children="">)</res_key>
+								<res_key id="255" children="">)</res_key>
 							</HEADER>
-							<BODY id="330" children="271,287,324,326,328,329">
-								<PROLOG id="271" children="270">
-									<res_key id="270" children="">{</res_key>
+							<BODY id="317" children="258,274,311,313,315,316">
+								<PROLOG id="258" children="257">
+									<res_key id="257" children="">{</res_key>
 								</PROLOG>
-								<LOCVARS id="287" children="273,275,276,278,280,281,283,285,286">
-									<VTYP id="273" children="272">
-										<res_key id="272" children="">num</res_key>
+								<LOCVARS id="274" children="260,262,263,265,267,268,270,272,273">
+									<VTYP id="260" children="259">
+										<res_key id="259" children="">num</res_key>
 									</VTYP>
-									<VNAME id="275" children="274">
-										<tokenv id="274" children="">V_d</tokenv>
+									<VNAME id="262" children="261">
+										<tokenv id="261" children="">V_d</tokenv>
 									</VNAME>
-									<res_key id="276" children="">,</res_key>
-									<VTYP id="278" children="277">
-										<res_key id="277" children="">text</res_key>
+									<res_key id="263" children="">,</res_key>
+									<VTYP id="265" children="264">
+										<res_key id="264" children="">text</res_key>
 									</VTYP>
-									<VNAME id="280" children="279">
-										<tokenv id="279" children="">V_e</tokenv>
+									<VNAME id="267" children="266">
+										<tokenv id="266" children="">V_e</tokenv>
 									</VNAME>
-									<res_key id="281" children="">,</res_key>
-									<VTYP id="283" children="282">
-										<res_key id="282" children="">text</res_key>
+									<res_key id="268" children="">,</res_key>
+									<VTYP id="270" children="269">
+										<res_key id="269" children="">text</res_key>
 									</VTYP>
-									<VNAME id="285" children="284">
-										<tokenv id="284" children="">V_f</tokenv>
+									<VNAME id="272" children="271">
+										<tokenv id="271" children="">V_f</tokenv>
 									</VNAME>
-									<res_key id="286" children="">,</res_key>
+									<res_key id="273" children="">,</res_key>
 								</LOCVARS>
-								<ALGO id="324" children="288,322,323">
-									<res_key id="288" children="">begin</res_key>
-									<INSTRUC id="322" children="297,298,321">
-										<COMMAND id="297" children="296">
-											<ASSIGN id="296" children="290,291,295">
-												<VNAME id="290" children="289">
-													<tokenv id="289" children="">V_a</tokenv>
+								<ALGO id="311" children="275,309,310">
+									<res_key id="275" children="">begin</res_key>
+									<INSTRUC id="309" children="284,285,308">
+										<COMMAND id="284" children="283">
+											<ASSIGN id="283" children="277,278,282">
+												<VNAME id="277" children="276">
+													<tokenv id="276" children="">V_a</tokenv>
 												</VNAME>
-												<res_key id="291" children="">=</res_key>
-												<TERM id="295" children="294">
-													<ATOMIC id="294" children="293">
-														<CONST id="293" children="292">
-															<tokenn id="292" children="">0</tokenn>
+												<res_key id="278" children="">=</res_key>
+												<TERM id="282" children="281">
+													<ATOMIC id="281" children="280">
+														<CONST id="280" children="279">
+															<tokenn id="279" children="">0</tokenn>
 														</CONST>
 													</ATOMIC>
 												</TERM>
 											</ASSIGN>
 										</COMMAND>
-										<res_key id="298" children="">;</res_key>
-										<INSTRUC id="321" children="307,308,320">
-											<COMMAND id="307" children="306">
-												<ASSIGN id="306" children="300,301,305">
-													<VNAME id="300" children="299">
-														<tokenv id="299" children="">V_b</tokenv>
+										<res_key id="285" children="">;</res_key>
+										<INSTRUC id="308" children="294,295,307">
+											<COMMAND id="294" children="293">
+												<ASSIGN id="293" children="287,288,292">
+													<VNAME id="287" children="286">
+														<tokenv id="286" children="">V_b</tokenv>
 													</VNAME>
-													<res_key id="301" children="">=</res_key>
-													<TERM id="305" children="304">
-														<ATOMIC id="304" children="303">
-															<CONST id="303" children="302">
-																<tokenn id="302" children="">0</tokenn>
+													<res_key id="288" children="">=</res_key>
+													<TERM id="292" children="291">
+														<ATOMIC id="291" children="290">
+															<CONST id="290" children="289">
+																<tokenn id="289" children="">0</tokenn>
 															</CONST>
 														</ATOMIC>
 													</TERM>
 												</ASSIGN>
 											</COMMAND>
-											<res_key id="308" children="">;</res_key>
-											<INSTRUC id="320" children="317,318,319">
-												<COMMAND id="317" children="316">
-													<ASSIGN id="316" children="310,311,315">
-														<VNAME id="310" children="309">
-															<tokenv id="309" children="">V_c</tokenv>
+											<res_key id="295" children="">;</res_key>
+											<INSTRUC id="307" children="304,305,306">
+												<COMMAND id="304" children="303">
+													<ASSIGN id="303" children="297,298,302">
+														<VNAME id="297" children="296">
+															<tokenv id="296" children="">V_c</tokenv>
 														</VNAME>
-														<res_key id="311" children="">=</res_key>
-														<TERM id="315" children="314">
-															<ATOMIC id="314" children="313">
-																<CONST id="313" children="312">
-																	<tokenn id="312" children="">0</tokenn>
+														<res_key id="298" children="">=</res_key>
+														<TERM id="302" children="301">
+															<ATOMIC id="301" children="300">
+																<CONST id="300" children="299">
+																	<tokenn id="299" children="">0</tokenn>
 																</CONST>
 															</ATOMIC>
 														</TERM>
 													</ASSIGN>
 												</COMMAND>
-												<res_key id="318" children="">;</res_key>
-												<INSTRUC id="319" children="">
+												<res_key id="305" children="">;</res_key>
+												<INSTRUC id="306" children="">
 												</INSTRUC>
 											</INSTRUC>
 										</INSTRUC>
 									</INSTRUC>
-									<res_key id="323" children="">end</res_key>
+									<res_key id="310" children="">end</res_key>
 								</ALGO>
-								<EPILOG id="326" children="325">
-									<res_key id="325" children="">}</res_key>
+								<EPILOG id="313" children="312">
+									<res_key id="312" children="">}</res_key>
 								</EPILOG>
-								<SUBFUNCS id="328" children="327">
-									<FUNCTIONS id="327" children="">
+								<SUBFUNCS id="315" children="314">
+									<FUNCTIONS id="314" children="">
 									</FUNCTIONS>
 								</SUBFUNCS>
-								<res_key id="329" children="">end</res_key>
+								<res_key id="316" children="">end</res_key>
 							</BODY>
 						</DECL>
-						<FUNCTIONS id="332" children="">
+						<FUNCTIONS id="319" children="">
 						</FUNCTIONS>
 					</FUNCTIONS>
 				</SUBFUNCS>
-				<res_key id="335" children="">end</res_key>
+				<res_key id="322" children="">end</res_key>
 			</BODY>
 		</DECL>
-		<FUNCTIONS id="416" children="414,415">
-			<DECL id="414" children="352,413">
-				<HEADER id="352" children="339,341,342,344,345,347,348,350,351">
-					<FTYP id="339" children="338">
-						<res_key id="338" children="">void</res_key>
+		<FUNCTIONS id="403" children="401,402">
+			<DECL id="401" children="339,400">
+				<HEADER id="339" children="326,328,329,331,332,334,335,337,338">
+					<FTYP id="326" children="325">
+						<res_key id="325" children="">void</res_key>
 					</FTYP>
-					<FNAME id="341" children="340">
-						<tokenf id="340" children="">F_resetglob</tokenf>
+					<FNAME id="328" children="327">
+						<tokenf id="327" children="">F_resetglob</tokenf>
 					</FNAME>
-					<res_key id="342" children="">(</res_key>
-					<VNAME id="344" children="343">
-						<tokenv id="343" children="">V_a</tokenv>
+					<res_key id="329" children="">(</res_key>
+					<VNAME id="331" children="330">
+						<tokenv id="330" children="">V_a</tokenv>
 					</VNAME>
-					<res_key id="345" children="">,</res_key>
-					<VNAME id="347" children="346">
-						<tokenv id="346" children="">V_b</tokenv>
+					<res_key id="332" children="">,</res_key>
+					<VNAME id="334" children="333">
+						<tokenv id="333" children="">V_b</tokenv>
 					</VNAME>
-					<res_key id="348" children="">,</res_key>
-					<VNAME id="350" children="349">
-						<tokenv id="349" children="">V_c</tokenv>
+					<res_key id="335" children="">,</res_key>
+					<VNAME id="337" children="336">
+						<tokenv id="336" children="">V_c</tokenv>
 					</VNAME>
-					<res_key id="351" children="">)</res_key>
+					<res_key id="338" children="">)</res_key>
 				</HEADER>
-				<BODY id="413" children="354,370,407,409,411,412">
-					<PROLOG id="354" children="353">
-						<res_key id="353" children="">{</res_key>
+				<BODY id="400" children="341,357,394,396,398,399">
+					<PROLOG id="341" children="340">
+						<res_key id="340" children="">{</res_key>
 					</PROLOG>
-					<LOCVARS id="370" children="356,358,359,361,363,364,366,368,369">
-						<VTYP id="356" children="355">
-							<res_key id="355" children="">num</res_key>
+					<LOCVARS id="357" children="343,345,346,348,350,351,353,355,356">
+						<VTYP id="343" children="342">
+							<res_key id="342" children="">num</res_key>
 						</VTYP>
-						<VNAME id="358" children="357">
-							<tokenv id="357" children="">V_d</tokenv>
+						<VNAME id="345" children="344">
+							<tokenv id="344" children="">V_d</tokenv>
 						</VNAME>
-						<res_key id="359" children="">,</res_key>
-						<VTYP id="361" children="360">
-							<res_key id="360" children="">text</res_key>
+						<res_key id="346" children="">,</res_key>
+						<VTYP id="348" children="347">
+							<res_key id="347" children="">text</res_key>
 						</VTYP>
-						<VNAME id="363" children="362">
-							<tokenv id="362" children="">V_e</tokenv>
+						<VNAME id="350" children="349">
+							<tokenv id="349" children="">V_e</tokenv>
 						</VNAME>
-						<res_key id="364" children="">,</res_key>
-						<VTYP id="366" children="365">
-							<res_key id="365" children="">text</res_key>
+						<res_key id="351" children="">,</res_key>
+						<VTYP id="353" children="352">
+							<res_key id="352" children="">text</res_key>
 						</VTYP>
-						<VNAME id="368" children="367">
-							<tokenv id="367" children="">V_f</tokenv>
+						<VNAME id="355" children="354">
+							<tokenv id="354" children="">V_f</tokenv>
 						</VNAME>
-						<res_key id="369" children="">,</res_key>
+						<res_key id="356" children="">,</res_key>
 					</LOCVARS>
-					<ALGO id="407" children="371,405,406">
-						<res_key id="371" children="">begin</res_key>
-						<INSTRUC id="405" children="380,381,404">
-							<COMMAND id="380" children="379">
-								<ASSIGN id="379" children="373,374,378">
-									<VNAME id="373" children="372">
-										<tokenv id="372" children="">V_a</tokenv>
+					<ALGO id="394" children="358,392,393">
+						<res_key id="358" children="">begin</res_key>
+						<INSTRUC id="392" children="367,368,391">
+							<COMMAND id="367" children="366">
+								<ASSIGN id="366" children="360,361,365">
+									<VNAME id="360" children="359">
+										<tokenv id="359" children="">V_a</tokenv>
 									</VNAME>
-									<res_key id="374" children="">=</res_key>
-									<TERM id="378" children="377">
-										<ATOMIC id="377" children="376">
-											<CONST id="376" children="375">
-												<tokenn id="375" children="">0</tokenn>
+									<res_key id="361" children="">=</res_key>
+									<TERM id="365" children="364">
+										<ATOMIC id="364" children="363">
+											<CONST id="363" children="362">
+												<tokenn id="362" children="">0</tokenn>
 											</CONST>
 										</ATOMIC>
 									</TERM>
 								</ASSIGN>
 							</COMMAND>
-							<res_key id="381" children="">;</res_key>
-							<INSTRUC id="404" children="390,391,403">
-								<COMMAND id="390" children="389">
-									<ASSIGN id="389" children="383,384,388">
-										<VNAME id="383" children="382">
-											<tokenv id="382" children="">V_b</tokenv>
+							<res_key id="368" children="">;</res_key>
+							<INSTRUC id="391" children="377,378,390">
+								<COMMAND id="377" children="376">
+									<ASSIGN id="376" children="370,371,375">
+										<VNAME id="370" children="369">
+											<tokenv id="369" children="">V_b</tokenv>
 										</VNAME>
-										<res_key id="384" children="">=</res_key>
-										<TERM id="388" children="387">
-											<ATOMIC id="387" children="386">
-												<CONST id="386" children="385">
-													<tokenn id="385" children="">0</tokenn>
+										<res_key id="371" children="">=</res_key>
+										<TERM id="375" children="374">
+											<ATOMIC id="374" children="373">
+												<CONST id="373" children="372">
+													<tokenn id="372" children="">0</tokenn>
 												</CONST>
 											</ATOMIC>
 										</TERM>
 									</ASSIGN>
 								</COMMAND>
-								<res_key id="391" children="">;</res_key>
-								<INSTRUC id="403" children="400,401,402">
-									<COMMAND id="400" children="399">
-										<ASSIGN id="399" children="393,394,398">
-											<VNAME id="393" children="392">
-												<tokenv id="392" children="">V_c</tokenv>
+								<res_key id="378" children="">;</res_key>
+								<INSTRUC id="390" children="387,388,389">
+									<COMMAND id="387" children="386">
+										<ASSIGN id="386" children="380,381,385">
+											<VNAME id="380" children="379">
+												<tokenv id="379" children="">V_c</tokenv>
 											</VNAME>
-											<res_key id="394" children="">=</res_key>
-											<TERM id="398" children="397">
-												<ATOMIC id="397" children="396">
-													<CONST id="396" children="395">
-														<tokenn id="395" children="">0</tokenn>
+											<res_key id="381" children="">=</res_key>
+											<TERM id="385" children="384">
+												<ATOMIC id="384" children="383">
+													<CONST id="383" children="382">
+														<tokenn id="382" children="">0</tokenn>
 													</CONST>
 												</ATOMIC>
 											</TERM>
 										</ASSIGN>
 									</COMMAND>
-									<res_key id="401" children="">;</res_key>
-									<INSTRUC id="402" children="">
+									<res_key id="388" children="">;</res_key>
+									<INSTRUC id="389" children="">
 									</INSTRUC>
 								</INSTRUC>
 							</INSTRUC>
 						</INSTRUC>
-						<res_key id="406" children="">end</res_key>
+						<res_key id="393" children="">end</res_key>
 					</ALGO>
-					<EPILOG id="409" children="408">
-						<res_key id="408" children="">}</res_key>
+					<EPILOG id="396" children="395">
+						<res_key id="395" children="">}</res_key>
 					</EPILOG>
-					<SUBFUNCS id="411" children="410">
-						<FUNCTIONS id="410" children="">
+					<SUBFUNCS id="398" children="397">
+						<FUNCTIONS id="397" children="">
 						</FUNCTIONS>
 					</SUBFUNCS>
-					<res_key id="412" children="">end</res_key>
+					<res_key id="399" children="">end</res_key>
 				</BODY>
 			</DECL>
-			<FUNCTIONS id="415" children="">
+			<FUNCTIONS id="402" children="">
 			</FUNCTIONS>
 		</FUNCTIONS>
 	</FUNCTIONS>

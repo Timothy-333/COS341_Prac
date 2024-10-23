@@ -43,12 +43,12 @@ public class IntermediateCodeGenerator {
 
     private String translateALGO(Parser.XMLParseTree node) {
         // ALGO ::= begin INSTRUC end
-        return translateINSTRUC(node.getChild(1)); // INSTRUC is the second child
+        return translateINSTRUC(node.getChild(1)); // INSTRUC is the secondschild
     }
 
     private String translateINSTRUC(Parser.XMLParseTree node) {
         if (node.getChildren().isEmpty()) {
-            return "\nREM END";
+            return "REM END";
         }
         // Handle INSTRUC1 ::= COMMAND ; INSTRUC2
         StringBuilder result = new StringBuilder();
@@ -114,7 +114,7 @@ public class IntermediateCodeGenerator {
         String code1 = translateCOND(node.getChild(1), label1, label2);
         String code2 = translateALGO(node.getChild(3));
         String code3 = translateALGO(node.getChild(5));
-        return code1 + "\nLABEL " + label1 + "\n" + code2 + "\nGOTO " + label3 + "\nLABEL " + label2 + "\n" + code3 + "\nLABEL " + label3;
+        return code1 + "\n\nLABEL " + label1 + "\n" + code2 + "\nGOTO " + label3 + "\n\nLABEL " + label2 + "\n" + code3 + "\n\nLABEL " + label3;
     }
 
     private String translateCOND(Parser.XMLParseTree node, String labelT, String labelF) {
@@ -153,13 +153,13 @@ public class IntermediateCodeGenerator {
             String arg2 = newLabel();
             String code1 = translateSIMPLE(node.getChild(2), labelT, arg2);
             String code2 = translateSIMPLE(node.getChild(4), labelT, labelF);
-            return code1 + "\nLABEL " + arg2 + "\n" + code2;
+            return code1 + "\n\nLABEL " + arg2 + "\n" + code2;
         }
         if (binop.equals("and")) {
             String arg2 = newLabel();
             String code1 = translateSIMPLE(node.getChild(2), arg2, labelF);
             String code2 = translateSIMPLE(node.getChild(4), labelT, labelF);
-            return code1 + "\nLABEL " + arg2 + "\n" + code2;
+            return code1 + "\n\nLABEL " + arg2 + "\n" + code2;
         } else {
             throw new IllegalArgumentException("Unknown BINOP type: " + binop);
         }
@@ -168,7 +168,7 @@ public class IntermediateCodeGenerator {
     private String translateUNOP(Parser.XMLParseTree node, String labelT, String labelF) {
         String unop = node.getChild(0).getChild(0).getValue();
         if (unop.equals("not")) {
-            return translateCOND(node.getChild(2), labelF, labelT);
+            return translateSIMPLE(node.getChild(2), labelF, labelT);
         } else {
             throw new IllegalArgumentException("Unknown UNOP type: " + unop);
         }

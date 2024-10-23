@@ -1,8 +1,32 @@
 import java.util.*;
+
 public class TypeChecker {
 
+public Map<String, ScopeAnalyzer.SymbolInfo> symbolTable;;
+
+TypeChecker() { 
+}
+
+TypeChecker(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable) {
+    this.symbolTable = symbolTable;
+}
+public String findSymbolType(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, int declaredID) {
+    for (Map.Entry<String, ScopeAnalyzer.SymbolInfo> entry : symbolTable.entrySet()) {
+        ScopeAnalyzer.SymbolInfo info = entry.getValue();
+        if(null==info){
+            System.err.println("GOD PLEASE HELP ME!");
+        }
+        if (info.getDeclarationID() == declaredID) {
+            System.out.println("HOORAY, IT WORKED!");
+            return info.getType();
+    }
+    
+}
+   throw new RuntimeException("Symbol was not found in the symbol table");
+}
  public boolean typeCheck(XMLParseTree xml) {
     String tag = xml.getTag();
+    
     // String token = xml.getValue();
     List<XMLParseTree> children = xml.getChildren();
 
@@ -12,13 +36,11 @@ public class TypeChecker {
 
         case "GLOBVARS": //nullable
         if (children.isEmpty()) {
-            System.out.println("BASE-CASE OF GLOBVARS REACHED");
             return true;
         }else if(children.size()==4){//VTYP(0) VNAME(1)  ,(2) GLOBVARS(3)  
-            return typeCheck(children.get(1)) && typeCheck(children.get(2)) && typeCheck(children.get(3));
+            return typeCheck(children.get(3));
         }
         break;
-
 
         case "ALGO": //begin(0) INSTRUC(1) end(2) 
         return typeCheck(children.get(1));
@@ -34,50 +56,63 @@ public class TypeChecker {
 
         // case "ASSIGN":
         case "ASSIGN"://ASSIGN := VNAME(0) <(1) input(2)
+        if(children.get(2).getValue()==null){
+            System.out.println("input has no value");
+        }
         if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getValue().equals("input")){
             if(typeOf(children.get(0))=='n'){
                 return true;
             }else{
-                return false;
+                // return false;
+                throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME input'");
             }
         }else if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getTag().equals("TERM")){
             if(typeOf(children.get(0))==typeOf(children.get(2))){
                 return true;
             }else{
-            return false;
+            // return false;
+            throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME TERM'");
         }
         }
         break;
         
 
         case "COMMAND"://COMMAND := skip(0) | halt(0) 
-        if(!children.isEmpty()&&children.get(0).getValue().equals("skip")||children.get(0).getValue().equals("halt")){
+        if(children.get(0).getValue()==null){
+            System.out.println("skip has no value");
+        }
+        if(children.get(0).getValue()!=null){
+            if(children.get(0).getValue().equals("skip")||children.get(0).getValue().equals("halt")){
             return true;
-
+            }
         //print ATOMIC
-        }else if(!children.isEmpty()&&children.get(0).getValue().equals("print")&&children.get(1).getTag()=="ATOMIC"){ 
+        else if(children.get(0).getValue()!=null && !children.isEmpty()&&children.get(0).getValue().equals("print")&&children.get(1).getTag()=="ATOMIC"){ 
             if (typeOf(children.get(1))=='n'){
                 return true;
             }else if(typeOf(children.get(1))=='t'){
                 return true;
             }
             else{
-                return false;
+                // return false;
+                throw new RuntimeException("Type Error:Invalid COMMAND type for 'print ATOMIC'");
             } 
-        //return ATOMIC 
-        }else if (children.size()==2&&children.get(0).getValue().equals("return")&&children.get(1).getTag().equals("ATOMIC")){ //TODO: Need help understanding this
+        //return ATOMIC
+        }
+        else if (children.size()==2&&children.get(0).getValue().equals("return")&&children.get(1).getTag().equals("ATOMIC")){ //TODO: Need help understanding this
             return checkReturnInFunctionScope(xml, children.get(1));
 
         //COMMAND := ASSIGN (0)
+        }
         }else if(!children.isEmpty()&&children.get(0).getTag()=="ASSIGN"){
             return typeCheck(children.get(0));
+            
 
         //COMMAND := CALL (0)
         }else if(!children.isEmpty()&&children.get(0).getTag().equals("CALL")){
             if(typeOf(children.get(0))=='v'){
                 return true;
             }else{
-                return false;
+                throw new RuntimeException("Invalid COMMAND type");
             }
         //COMMAND := BRANCH (0)
         }else if(!children.isEmpty()&&children.get(0).getTag().equals("BRANCH")){
@@ -89,7 +124,8 @@ public class TypeChecker {
         if(typeOf(children.get(1))=='b'){
             return typeCheck(children.get(3))&&typeCheck(children.get(5));
         }else{
-            return false;
+            // return false;
+            throw new RuntimeException("Invalid BRANCH type");
         }
         
         case "FUNCTIONS": //nullable
@@ -114,15 +150,9 @@ public class TypeChecker {
          return true;
          
         case "LOCVARS": //LOCVARS := VTYP(0) VNAME(1) ,(2) VTYP(3) VNAME(4) ,(5) VTYP(6) VNAME(7)
-        // char T0 = typeOf(children.get(0));
-        // String id0 = "MISSING SYMBOLTABLE DATA"; //TODO: Missing SymbolTable Data Required for binding
+        //*Taken care of by symbol Table */
 
-        // char T1 = typeOf(children.get(3));
-        // String id1 = "MISSING SYMBOLTABLE DATA"; //TODO: Missing SymbolTable Data Required for binding
-
-        // char T2 = typeOf(children.get(6));
-        // String id2 = "MISSING SYMBOLTABLE DATA"; //TODO: Missing SymbolTable Data Required for binding
-        // return true;
+        return true;
 
         case "DECL": //HEADER BODY
         return typeCheck(children.get(0))&&typeCheck(children.get(1));
@@ -131,10 +161,8 @@ public class TypeChecker {
         if(typeOf(children.get(3))==typeOf(children.get(5))&&typeOf(children.get(5))==typeOf(children.get(7))&&typeOf(children.get(7))=='n'){
             return true;
         }else{
-            return false;     
+            throw new RuntimeException("Invalid HEADER type"); 
         }
-
-
 
         
         
@@ -166,9 +194,24 @@ public class TypeChecker {
             return 't';
          }
          break;
-        
+
+        case "VNAME":
+        if(findSymbolType(symbolTable, children.get(0).getId())=="text"){
+            return 't';
+        }else if(findSymbolType(symbolTable,children. get(0).getId())=="num"){
+            return 'n';
+        }
+        break;
+
+        case "TERM": //TERM := ATOMIC(0) | CALL (0) | OP (0)
+        return typeOf(children.get(0));
+
+
         
         case "BINOP": //BINOP := or | and |  eq | grt | add | sub | mul | div | not | sqrt
+        if(children.get(0).getValue()==null){
+            System.err.println("ERROR IN BINOP");
+        }
             if (children.get(0).getValue().equals("or") || children.get(0).getValue().equals("and")) {
                 return 'b';
             } else if (children.get(0).getValue().equals("eq") || children.get(0).getValue().equals("grt")) {
@@ -179,6 +222,9 @@ public class TypeChecker {
             break;
 
         case "UNOP":
+        if(children.get(0).getValue()==null){
+            System.err.println("ERROR IN UNOP");
+        }
         if (children.get(0).getValue().equals("not")){
             return 'b';
         }else if(children.get(0).getValue().equals("sqrt")){
@@ -187,13 +233,32 @@ public class TypeChecker {
         break;
 
         case "OP": //UNOP(0) ( (1) and ARG(2) ) (3)
+        if(children.get(0).getTag().equals("UNOP")){      
+
         if((typeOf(children.get(0))==typeOf(children.get(2)))&&typeOf(children.get(2))=='b'){
             return 'b';
         }else if((typeOf(children.get(0))==typeOf(children.get(2)))&&typeOf(children.get(2))=='n'){
             return 'n';
         }
+    } else if(children.get(0).getTag().equals("BINOP")){//BINOP(0) ((1) ARG1(2) ,(3) ARG2(4) )(5)
+        if((typeOf(children.get(0))==typeOf(children.get(2)))&&typeOf(children.get(2))==typeOf(children.get(4))&&typeOf(children.get(4))=='b'){
+            return 'b';
+        }else if((typeOf(children.get(0))==typeOf(children.get(2)))&&typeOf(children.get(2))==typeOf(children.get(4))&&typeOf(children.get(4))=='n'){
+            return 'n';
+        }else if(typeOf(children.get(0))=='c'&&typeOf(children.get(2))==typeOf(children.get(4))&&typeOf(children.get(4))=='n'){
+            return  'b';
+        }
+        else{
+            return 'u';
+        }
+        
+    }
         break;
 
+
+        case "ARG": //ARG := ATOMIC(0) | OP(0)
+        return typeOf(children.get(0));
+ 
         case "SIMPLE": //BINOP(0)  ((1) ATOMIC(2) ,(3) ATOMIC(4)   )(5)
         if (typeOf(children.get(0)) == typeOf(children.get(2))&&typeOf(children.get(2))==typeOf(children.get(4))&&typeOf(children.get(4))=='b') {
             return 'b';
@@ -203,7 +268,7 @@ public class TypeChecker {
             return 'u';
         }
 
-        case "COMPOSIT"://BINOOP(0)  ((1) SIMPLE(2) ,(3) SIMPLE(4)   )(5)
+        case "COMPOSIT"://BINOP(0)  ((1) SIMPLE(2) ,(3) SIMPLE(4)   )(5)
         if(children.size()==6){
         if(typeOf(children.get(0))==typeOf(children.get(2))&&typeOf(children.get(2))==typeOf(children.get(4))&&typeOf(children.get(4))=='b'){
             return 'b';
@@ -218,11 +283,16 @@ public class TypeChecker {
         }
          break;
 
-        
-
         case "COND": //COND := SIMPLE(0) | COMPOSIT(0)
         return typeOf(children.get(0));
 
+        case "FNAME":
+        if(findSymbolType(symbolTable, children.get(0).getId())=="void"){
+            return 'v';
+        }else if(findSymbolType(symbolTable,children. get(0).getId())=="num"){
+            return 'n';
+        }
+        break;
         
         default:
             return 'u';  // Handle unknown cases
@@ -245,9 +315,6 @@ public class TypeChecker {
             }
             current = current.getParent();
         }
-
         return false; // If no function scope was found
-    }
-
-    
+    }  
 }

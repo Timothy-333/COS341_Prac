@@ -307,4 +307,9 @@ public class ScopeAnalyzer {
             this.closingBracketEncountered = closingBracketEncountered;
         }
     }
+
+     public Map<String, SymbolInfo> getSymbolTable(){
+         return symbolTable;
+     }
+
 }

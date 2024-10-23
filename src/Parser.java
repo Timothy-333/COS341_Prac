@@ -96,11 +96,11 @@ public class Parser {
                         this.root.addChild(temp.pop());
                     }
 
-                    TypeChecker t = new TypeChecker();
-                    if (t.typeCheck(this.root)){
-                        System.out.println("TERRIFIC!");
-                    }else{
-                        System.out.println("TERRIBLE!");};
+
+                    // if (t.typeCheck(this.root)){
+                    //     System.out.println("TERRIFIC!");
+                    // }else{
+                    //     System.out.println("TERRIBLE!");}
 
                     String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
                     String xmlFileBody = root.toString();
@@ -113,9 +113,12 @@ public class Parser {
                     ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
                     try {
                         scopeAnalyzer.analyze(getRoot());
+                        TypeChecker typeChecker = new TypeChecker(scopeAnalyzer.getSymbolTable());
+
                         scopeAnalyzer.printSymbolTable();
+                        typeChecker.typeCheck(getRoot());
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        e.printStackTrace();;
                     }
                 
                     return;
@@ -186,8 +189,6 @@ public class Parser {
             return rhs;
         }
     }
-
-
 
     private static final List<Rule> rules = new ArrayList<>(Arrays.asList(
         new Rule("PROG", Arrays.asList("main", "GLOBVARS", "ALGO", "FUNCTIONS")),

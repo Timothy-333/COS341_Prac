@@ -48,11 +48,7 @@ public class XMLParseTree {
     }
 
     public void setValue(String value) {
-        if (value.equals("<")){
-        this.value = "$lt;";
-        }else{
             this.value =value;
-        }
     }
 
     @Override
@@ -88,7 +84,11 @@ public class XMLParseTree {
 
         // Add value or child nodes
         if (value != null) {
+            if(value.equals("<")){
+                sb.append("$lt;");
+            }else{
             sb.append(value);
+        }
         } else {
             sb.append("\n");
             for (XMLParseTree child : children) {

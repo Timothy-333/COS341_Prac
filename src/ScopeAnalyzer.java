@@ -90,6 +90,8 @@ public class ScopeAnalyzer {
             Scope currentScope = scopeStack.peek(); // Get the current scope
 
             if (tag.equals("tokenv")) {
+                if(typeEncountered != null && typeEncountered.equals("void"))
+                    throw new RuntimeException("Error: Variable '" + value + "' cannot be declared as void in scope " + currentScope.getId());
                 handleVariable(node, value, currentScope);
                 typeEncountered = null; // Clear the type after variable declaration
             } 

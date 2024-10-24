@@ -3,12 +3,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.io.File;
 public class main {
     public static void main(String[] args) {
         try {
             // Read input from file
             System.out.println("\n\033[0;37m==================== Reading input from file ====================\033[0m");
-            String text = Files.readString(Paths.get("src/input3.txt"), StandardCharsets.US_ASCII);
+            String text = Files.readString(Paths.get("input.txt"), StandardCharsets.US_ASCII);
             System.out.println("\033[0;32mReading input from file passed\033[0m");
             
             // Lexical analysis
@@ -25,7 +26,6 @@ public class main {
             // Scope analysis
             System.out.println("\n\033[0;35m==================== Performing scope analysis ====================\033[0m");
             ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
-            XMLParseTree root = parser.getRoot();
             Map<String, ScopeAnalyzer.SymbolInfo> symbolTable = scopeAnalyzer.analyze(parser.getRoot());
             scopeAnalyzer.printSymbolTable();
             System.out.println("\033[0;32mScope analysis passed\033[0m");
@@ -44,7 +44,12 @@ public class main {
             CodeGenerator cg = new CodeGenerator(symbolTable, parser.getRoot());
             String intermediateCode = cg.generateIntermediateCode(false);
             System.out.println(intermediateCode);
-            Files.write(Paths.get("src/outputs/intermediateCode5.a.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
+            String folderPath = "outputs/";
+            File folder = new File(folderPath);
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+            Files.write(Paths.get("outputs/intermediateCode5.a.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
             System.out.println("\nData Written to intermediateCode5.a.txt");
             System.out.println("\033[0;32mIntermediate code generation (5.a) passed\033[0m");
             
@@ -52,7 +57,7 @@ public class main {
             System.out.println("\n\033[0;34m==================== Generating intermediate code (5.b) ====================\033[0m");
             intermediateCode = cg.generateIntermediateCode(true);
             System.out.println(intermediateCode);
-            Files.write(Paths.get("src/outputs/intermediateCode5.b.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
+            Files.write(Paths.get("outputs/intermediateCode5.b.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
             System.out.println("\nData Written to intermediateCode5.b.txt");
             System.out.println("\033[0;32mIntermediate code generation (5.b) passed\033[0m");
 
@@ -60,7 +65,7 @@ public class main {
             System.out.println("\n\033[0;34m==================== Generating target code (5.b) ====================\033[0m");
             String targetCode = cg.translateToBasic(intermediateCode);
             System.out.println(targetCode);
-            Files.write(Paths.get("src/outputs/targetCode5.b.txt"), targetCode.getBytes(StandardCharsets.UTF_8));
+            Files.write(Paths.get("outputs/targetCode5.b.txt"), targetCode.getBytes(StandardCharsets.UTF_8));
             System.out.println("\nData Written to targetCode5.b.txt");
             System.out.println("\033[0;32mTarget code generation (5.b) passed\033[0m");
 

@@ -110,6 +110,7 @@ public class Parser {
                         TypeChecker typeChecker = new TypeChecker(scopeAnalyzer.getSymbolTable());
 
                         scopeAnalyzer.printSymbolTable();
+                        System.out.println("\nType checking...");
                         if(typeChecker.typeCheck(getRoot())) {
                             System.out.println("Type checking successful");
                         }else{

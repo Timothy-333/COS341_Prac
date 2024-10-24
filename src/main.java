@@ -31,11 +31,9 @@ public class main {
             // Intermediate code generation
             CodeGenerator icg = new CodeGenerator(symbolTable, parser.getRoot());
             String intermediateCode = icg.generateIntermediateCode(false);
+            // Write intermediate code to a file
+            Files.write(Paths.get("src/outputs/intermediateCode5.a.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
             System.out.println(intermediateCode);
-            // Write intermediate code to file
-            Files.write(Paths.get("src/outputs/intermediateCode.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
-            String targetCode = icg.generateIntermediateCode(true);
-            System.out.println(targetCode);
         } catch (IOException e) {
             e.printStackTrace();
         }

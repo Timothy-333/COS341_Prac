@@ -7,11 +7,8 @@ public class CodeGenerator {
     private Map<String, String> functionMap = new HashMap<>();
     int labelCounter, varCounter = 0;
 
-<<<<<<< HEAD
-    public CodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, Parser.XMLParseTree rootNode) {
-=======
-    public IntermediateCodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, XMLParseTree rootNode) {
->>>>>>> feat/type_checker
+    public CodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, XMLParseTree rootNode) {
+
         this.symbolTable = symbolTable;
         this.rootNode = rootNode;
         this.functionMap.put("not", "!");
@@ -37,12 +34,7 @@ public class CodeGenerator {
     public String generateIntermediateCode(boolean withFunctions) {
         return translatePROG(rootNode, withFunctions);
     }
-<<<<<<< HEAD
-    private String translatePROG(Parser.XMLParseTree node, boolean withFunctions) {
-=======
-
-    public String translatePROG(XMLParseTree node) {
->>>>>>> feat/type_checker
+    private String translatePROG(XMLParseTree node, boolean withFunctions) {
         String aCode = translateALGO(node.getChild(2)); // ALGO is the third child
         String out = aCode + "\nSTOP";
         if (withFunctions) {
@@ -274,7 +266,7 @@ public class CodeGenerator {
     }
 
     // Function translation
-    private String translateFUNCTIONS(Parser.XMLParseTree node) {
+    private String translateFUNCTIONS(XMLParseTree node) {
         if (node.getChildren().isEmpty()) {
             return "REM END";
         }
@@ -283,20 +275,20 @@ public class CodeGenerator {
         return dCode + "\nSTOP\n" + fCode;
     }
     
-    private String translateDECL(Parser.XMLParseTree node) {
+    private String translateDECL(XMLParseTree node) {
         String header = translateHEADER(node.getChild(0));
         String body = translateBODY(node.getChild(1));
         return body;
     }
     
-    private String translateHEADER(Parser.XMLParseTree node) {
+    private String translateHEADER(XMLParseTree node) {
         // HEADER ::= FTYP FNAME( VNAME1 , VNAME2 , VNAME3 )
         // FTYP and VNAMEs are ignored for translation purposes
         String fName = translateVNAME(node.getChild(1));
         return "FUNC " + fName;
     }
     
-    private String translateBODY(Parser.XMLParseTree node) {
+    private String translateBODY(XMLParseTree node) {
         String pCode = translatePROLOG(node.getChild(0));
         String aCode = translateALGO(node.getChild(2));
         String eCode = translateEPILOG(node.getChild(4));
@@ -304,17 +296,17 @@ public class CodeGenerator {
         return pCode + "\n" + aCode + "\n" + eCode + "\n" + sCode;
     }
     
-    private String translatePROLOG(Parser.XMLParseTree node) {
+    private String translatePROLOG(XMLParseTree node) {
         // Assuming inlining method
         return "REM BEGIN";
     }
     
-    private String translateEPILOG(Parser.XMLParseTree node) {
+    private String translateEPILOG(XMLParseTree node) {
         // Assuming inlining method
         return "REM END";
     }
     
-    private String translateSUBFUNCS(Parser.XMLParseTree node) {
+    private String translateSUBFUNCS(XMLParseTree node) {
         return translateFUNCTIONS(node.getChild(0));
     }
 }

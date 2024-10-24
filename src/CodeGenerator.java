@@ -306,7 +306,7 @@ public class CodeGenerator {
         String aCode = translateALGO(node.getChild(2));
         String eCode = translateEPILOG(node.getChild(3));
         String sCode = translateSUBFUNCS(node.getChild(4));
-        return pCode + "\n" + aCode + "\n" + eCode + "\n" + sCode;
+        return pCode + "\n" + aCode + "\nEND FUNCTION\n" + eCode + "\n" + sCode;
     }
     
     private String translatePROLOG(XMLParseTree node) {
@@ -341,17 +341,18 @@ public class CodeGenerator {
                 String[] parts = line.split(" := ");
                 if(parts[1].contains("CALL_")) {
                     String functionName = parts[1].substring(5, parts[1].indexOf("("));
-                    basicCode.add(parts[0] + " = " + functionName + "(" + parts[1].substring(parts[1].indexOf("(") + 1, parts[1].indexOf(")")) + ")");
+                    basicCode.add("LET " + parts[0] + " = " + functionName + "(" + parts[1].substring(parts[1].indexOf("(") + 1, parts[1].indexOf(")")) + ")");
                 }
                 else {
-                    basicCode.add(parts[0] + " = " + parts[1]);
+                    basicCode.add("LET " + parts[0] + " = " + parts[1]);
                 }
             } 
             
             // Translate function calls
             else if (line.startsWith("CALL_")) {
-                // Do nothing
-            } 
+                String variableVoidCall = "LET vv = ";
+                basicCode.add(variableVoidCall + " " + line.substring(5));
+            }
             
             // Translate labels
             else if (line.startsWith("LABEL ")) {
@@ -373,22 +374,13 @@ public class CodeGenerator {
             
             // Translate STOP
             else if (line.equals("STOP")) {
-                basicCode.add("END");
                 if (!functionStack.isEmpty()) {
                     String functionName = functionStack.pop();
-                    basicCode.add("END FUNCTION ");
                 }
             } 
-            
-            // Translate PRINT statements
-            else if (line.startsWith("PRINT ")) {
-                basicCode.add("PRINT " + line.substring(6));
-            }
-            
-            // REM statements remain the same
-            else if (line.startsWith("REM ")) {
+            else
                 basicCode.add(line);
-            }
+            
         }
         
         return String.join("\n", basicCode);

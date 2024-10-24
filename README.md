@@ -14,3 +14,43 @@
    ```
 4. **View the Output**:
    - The program will read the input from the `input.txt` file, process it, and display the output in the terminal as well as write to an output folder.
+
+5. **Example Input**:
+   - The `input.txt` file should contain the input data for the program. Here is an example of the input format:
+
+   ```
+   main
+   num V_a, num V_b, num V_c,
+   begin
+      V_a = F_euclid(9, 3, 0);
+      print V_a;
+   end
+
+   num F_euclid(V_a, V_b, V_c)
+   {
+      num V_d, text V_e, text V_f,
+      begin
+
+         if eq(V_a, V_b)
+         then
+               begin
+                  return V_a;
+               end
+         else
+               begin
+                  if grt(V_a, V_b)
+                  then
+                     begin
+                           V_a = sub(V_a, V_b);
+                     end
+                  else
+                     begin
+                           V_b = sub(V_b, V_a);
+                     end;
+                  V_c = F_euclid(V_a, V_b, V_c);
+                  return V_c;
+               end;
+      end
+   }
+   end
+   ```

@@ -1,0 +1,45 @@
+main
+num V_a , num V_b , num V_c ,
+begin
+    V_a = F_func1 ( V_a , V_b , V_c ) ;
+    V_b = 10 ;
+    V_c = 20 ;
+    V_a = div ( mul ( V_b , 10 ) , div ( 100 , V_c ) ) ;
+    if and ( grt ( V_b , V_c ) , eq ( V_a , 10 ) ) then
+        begin
+            V_a = 100 ;
+        end
+    else
+        begin
+            F_resetglob ( 0 , 0 , 0 ) ;
+        end ;
+end
+num F_func1 ( V_a , V_b , V_c )
+{
+    num V_d , text V_e , text V_f ,
+    begin
+        F_resetlocal ( 0 , 0 , 0 ) ;
+        return 100 ;
+    end
+}
+    void F_resetlocal ( V_a , V_b , V_c )
+    {
+        num V_d , text V_e , text V_f ,
+        begin
+            V_a = 0 ;
+            V_b = 0 ;
+            V_c = 0 ;
+        end
+    }
+    end
+end
+void F_resetglob ( V_a , V_b , V_c )
+{
+    num V_d , text V_e , text V_f ,
+    begin
+        V_a = 0 ;
+        V_b = 0 ;
+        V_c = 0 ;
+    end
+}
+end

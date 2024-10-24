@@ -95,31 +95,8 @@ public class Parser {
                     while (!temp.isEmpty()) {
                         this.root.addChild(temp.pop());
                     }
-
-                    String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
                     String xmlFileBody = root.toString();
-                    String xmlFile = xmlFileHeader + xmlFileBody;
-
-                    System.out.println("XML Parse Tree:");
-                    // System.out.println(xmlFile);
-
-                    writeToFile("result.xml",xmlFile);
-                    ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
-                    try {
-                        scopeAnalyzer.analyze(getRoot());
-                        TypeChecker typeChecker = new TypeChecker(scopeAnalyzer.getSymbolTable());
-
-                        scopeAnalyzer.printSymbolTable();
-                        System.out.println("\nType checking...");
-                        if(typeChecker.typeCheck(getRoot())) {
-                            System.out.println("Type checking successful");
-                        }else{
-                            System.out.println("Type checking failed");
-                        };
-                    } catch (Exception e) {
-                        e.printStackTrace();;
-                    }
-                
+                    writeToFile("result.xml",xmlFileBody);
                     return;
                 } else {
                     throw new RuntimeException("Unknown action: " + action);
@@ -250,19 +227,122 @@ public class Parser {
         new Rule("SUBFUNCS", Arrays.asList("FUNCTIONS"))
     ));
 
-public static void writeToFile(String fileName, String root) {
-    // Defining the folder and file path
-    String folderPath = "outputs/";
-    File folder = new File(folderPath);
+    class XMLParseTree {
+            private String tag;
+            private List<XMLParseTree> children;
+            private String value;
+            private int id;
+            private Map<String, String> attributes; // Add attributes map
 
-    // Create the folder if it doesn't exist
-    if (!folder.exists()) {
-        boolean isCreated = folder.mkdirs();
-        if (!isCreated) {
-            System.err.println("Failed to create output directory.");
-            return;
+            public XMLParseTree(String tag, int id) {
+                this.id = id;
+                this.tag = tag;
+                this.children = new ArrayList<>();
+                this.attributes = new HashMap<>(); // Initialize attributes map
+            }
+    
+            public void addChild(XMLParseTree child) {
+                children.add(child);
+            }
+    
+            public void setValue(String value) {
+                this.value = value;
+            }
+    
+            public void setAttribute(String key, String value) {
+                attributes.put(key, value);
+            }
+    
+            public String getAttribute(String key) {
+                return attributes.get(key);
+            }
+    
+            @Override
+            public String toString() {
+                return toString(0); // Start with depth 0
+            }
+    
+        // Recursive method with indentation
+        public String toString(int depth) {
+            StringBuilder sb = new StringBuilder();
+            String indent = "\t".repeat(depth); // Two spaces per depth level
+    
+                // Collect children IDs
+                StringBuilder childrenIds = new StringBuilder();
+                for (XMLParseTree child : children) {
+                    if (childrenIds.length() > 0) {
+                        childrenIds.append(",");
+                    }
+                    childrenIds.append(child.id);
+                }
+    
+                // Open tag with ID and children IDs
+                sb.append(indent)
+                  .append("<").append(tag)
+                  .append(" id=\"").append(id).append("\"");
+    
+                if (childrenIds.length() > 0) {
+                    sb.append(" children=\"").append(childrenIds).append("\"");
+                } else {
+                    sb.append(" children=\"\"");
+                }
+    
+                // Add other attributes
+                for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                    sb.append(" ").append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"");
+                }
+    
+                sb.append(">");
+    
+                // Add value or child nodes
+                if (value != null) {
+                    sb.append(value);
+                } else {
+                    sb.append("\n");
+                    for (XMLParseTree child : children) {
+                        sb.append(child.toString(depth + 1)); // Recursive call with increased depth
+                    }
+                    sb.append(indent); // Closing tag at the same indentation level
+                }
+    
+                sb.append("</").append(tag).append(">\n");
+                return sb.toString();
+            }
+    
+            public String getTag() {
+                return tag;
+            }
+    
+            public String getValue() {
+                return value;
+            }
+    
+            public List<XMLParseTree> getChildren() {
+                return children;
+            }
+            public int getId() {
+                return id;
+            }
+
+            public Parser.XMLParseTree getChild(int i) {
+                return children.get(i);
+            }
         }
-    }
+
+    public static void writeToFile(String fileName, String root) {
+        // Defining the folder and file path
+        String folderPath = "outputs/";
+        File folder = new File(folderPath);
+        String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
+        root = xmlFileHeader + root;
+        // Create the folder if it doesn't exist
+        if (!folder.exists()) {
+            boolean isCreated = folder.mkdirs();
+            if (!isCreated) {
+                System.err.println("Failed to create output directory.");
+                return;
+            }
+        }
 
     // Write to the file
     try (FileWriter writer = new FileWriter(folderPath + fileName)) {

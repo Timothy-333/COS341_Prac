@@ -3,7 +3,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class ScopeAnalyzer {
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
     // Entry point for analysis
-    public Map<String, SymbolInfo> analyze(Parser.XMLParseTree root) {
+    public Map<String, SymbolInfo> analyze(XMLParseTree root) {
         System.out.println("Starting analysis...");
         scopeStack.push(new Scope(root.getId(), "F_main")); // Initialize scope with the root's ID
         traverseTree(root); // Start traversal from the root of the parse tree
@@ -56,18 +55,18 @@ public class ScopeAnalyzer {
     }
 
     // Traverses the XML parse tree recursively
-    private void traverseTree(Parser.XMLParseTree node) {
+    private void traverseTree(XMLParseTree node) {
         if (node == null) return;
 
         processNode(node); // Process the current node
 
-        for (Parser.XMLParseTree child : node.getChildren()) {
+        for (XMLParseTree child : node.getChildren()) {
             traverseTree(child); // Recursively process child nodes
         }
     }
 
     // Processes an individual XML parse tree node
-    private void processNode(Parser.XMLParseTree node) {
+    private void processNode(XMLParseTree node) {
         String tag = node.getTag();
         String value = node.getValue();
         if (tag.equals("res_key")) {
@@ -90,6 +89,8 @@ public class ScopeAnalyzer {
             Scope currentScope = scopeStack.peek(); // Get the current scope
 
             if (tag.equals("tokenv")) {
+                if(typeEncountered != null && typeEncountered.equals("void"))
+                    throw new RuntimeException("Error: Variable '" + value + "' cannot be declared as void in scope " + currentScope.getId());
                 handleVariable(node, value, currentScope);
                 typeEncountered = null; // Clear the type after variable declaration
             } 
@@ -102,7 +103,7 @@ public class ScopeAnalyzer {
     }
 
     // Handle variable declaration or usage
-    private void handleVariable(Parser.XMLParseTree node, String value, Scope currentScope) {
+    private void handleVariable(XMLParseTree node, String value, Scope currentScope) {
         String declaredName = findDeclaredVariableNameInScopes(value);
         if(Lexer.isKeyword(value.substring(2))) {
             throw new RuntimeException("Error: Variable '" + value + "' is a keyword in scope " + currentScope.getId());
@@ -132,7 +133,7 @@ public class ScopeAnalyzer {
             }
         }
     }
-    private void declareVariable(Parser.XMLParseTree node, String value, Scope currentScope) {
+    private void declareVariable(XMLParseTree node, String value, Scope currentScope) {
         String uniqueName = generateUniqueName("v");
         symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
         currentScope.addVariable(value, uniqueName); // Add variable to the current scope
@@ -140,7 +141,7 @@ public class ScopeAnalyzer {
         node.setValue(uniqueName); // Update the value of the node to the unique name
         typeEncountered = null; // Clear the type after declaration
     }
-    private void handleFunction(Parser.XMLParseTree node, String value, Scope currentScope) {
+    private void handleFunction(XMLParseTree node, String value, Scope currentScope) {
         if (typeEncountered != null) {
             if (findDeclaredFunctionNameInScope(value, currentScope) != null || scopeStack.peek().getName().equals(value)) {
                 throw new RuntimeException("Error: Function '" + value + "' redeclared in scope " + currentScope.getId());
@@ -148,8 +149,8 @@ public class ScopeAnalyzer {
             String uniqueName = generateUniqueName("f");
             symbolTable.put(uniqueName, new SymbolInfo(value, currentScope.getId(), typeEncountered, node.getId()));
             currentScope.addFunction(value, uniqueName); // Add function to the current scope
-            List<Parser.XMLParseTree> callsWithoutDeclarations = currentScope.getCallsWithoutDeclarations(value);
-            for (Parser.XMLParseTree call : callsWithoutDeclarations) {
+            List<XMLParseTree> callsWithoutDeclarations = currentScope.getCallsWithoutDeclarations(value);
+            for (XMLParseTree call : callsWithoutDeclarations) {
                 symbolTable.get(uniqueName).addTreeId(call.getId());
                 call.setValue(uniqueName); // Update the value of the node to the unique name
                 currentScope.removeCallWithoutDeclaration(call);
@@ -257,7 +258,7 @@ public class ScopeAnalyzer {
     private static class Scope {
         private int id;
         private String name;
-        private List<Parser.XMLParseTree> callsWithoutDeclarations = new ArrayList<>();
+        private List<XMLParseTree> callsWithoutDeclarations = new ArrayList<>();
         private Map<String, String> variables = new HashMap<>();
         private Map<String, String> functions = new HashMap<>();
         private boolean closingBracketEncountered = false;
@@ -289,18 +290,18 @@ public class ScopeAnalyzer {
         public String getFunction(String originalName) {
             return functions.get(originalName);
         }
-        public void addCallWithoutDeclaration(Parser.XMLParseTree node) {
+        public void addCallWithoutDeclaration(XMLParseTree node) {
             callsWithoutDeclarations.add(node);
         }
-        public void removeCallWithoutDeclaration(Parser.XMLParseTree node) {
+        public void removeCallWithoutDeclaration(XMLParseTree node) {
             callsWithoutDeclarations.remove(node);
         }
-        public List<Parser.XMLParseTree> getCallsWithoutDeclarations() {
+        public List<XMLParseTree> getCallsWithoutDeclarations() {
             return callsWithoutDeclarations;
         }
-        public List<Parser.XMLParseTree> getCallsWithoutDeclarations(String name) {
-            List<Parser.XMLParseTree> calls = new ArrayList<>();
-            for (Parser.XMLParseTree call : callsWithoutDeclarations) {
+        public List<XMLParseTree> getCallsWithoutDeclarations(String name) {
+            List<XMLParseTree> calls = new ArrayList<>();
+            for (XMLParseTree call : callsWithoutDeclarations) {
                 if (call.getValue().equals(name)) {
                     calls.add(call);
                 }
@@ -313,5 +314,9 @@ public class ScopeAnalyzer {
         public void setClosingBracketEncountered(boolean closingBracketEncountered) {
             this.closingBracketEncountered = closingBracketEncountered;
         }
+    }
+
+    public Map<String, ScopeAnalyzer.SymbolInfo> getSymbolTable() {
+        return symbolTable;
     }
 }

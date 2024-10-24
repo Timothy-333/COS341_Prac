@@ -1,5 +1,8 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class CodeGenerator {
     private Map<String, ScopeAnalyzer.SymbolInfo> symbolTable;
@@ -38,7 +41,7 @@ public class CodeGenerator {
         String aCode = translateALGO(node.getChild(2)); // ALGO is the third child
         String out = aCode + "\nSTOP";
         if (withFunctions) {
-            String fCode = translateFUNCTIONS(node.getChild(4)); // FUNCTIONS is the fifth child
+            String fCode = translateFUNCTIONS(node.getChild(3));
             out += "\n" + fCode;
         }
         return out;
@@ -78,13 +81,15 @@ public class CodeGenerator {
                         return "STOP";
                     case "print":
                         return "PRINT " + translateATOMIC(node.getChild(1));
+                    case "return":
+                        return "RETURN " + translateATOMIC(node.getChild(1));
                     default:
                         throw new IllegalArgumentException("Unknown command: " + commandNode.getValue());
                 }
             case "ASSIGN":
                 return translateASSIGN(commandNode);
             case "CALL":
-                return translateCALL(commandNode);
+                return translateCALL(commandNode, null);
             case "BRANCH":
                 return translateBRANCH(commandNode);
             default:
@@ -102,12 +107,17 @@ public class CodeGenerator {
         }
     }
 
-    private String translateCALL(XMLParseTree node) {
+    private String translateCALL(XMLParseTree node, String place) {
         String functionName = node.getChild(0).getChild(0).getValue();
         String p1 = translateATOMIC(node.getChild(2));
         String p2 = translateATOMIC(node.getChild(4));
         String p3 = translateATOMIC(node.getChild(6));
-        return "CALL_" + functionName + "(" + p1 + "," + p2 + "," + p3 + ")";
+        String out = "";
+        if (place != null) {
+            out += place + " := ";
+        }
+        out += "CALL_" + functionName + "(" + p1 + "," + p2 + "," + p3 + ")";
+        return out;
     }
 
     private String translateBRANCH(XMLParseTree node) {
@@ -223,7 +233,7 @@ public class CodeGenerator {
             case "ATOMIC":
                 return translateATOMIC(node.getChild(0), place);
             case "CALL":
-                return translateCALL(node.getChild(0));
+                return translateCALL(node.getChild(0), place);
             case "OP":
                 return translateOP(node.getChild(0), place);
             default:
@@ -278,21 +288,24 @@ public class CodeGenerator {
     private String translateDECL(XMLParseTree node) {
         String header = translateHEADER(node.getChild(0));
         String body = translateBODY(node.getChild(1));
-        return body;
+        return header + "\n" + body;
     }
     
     private String translateHEADER(XMLParseTree node) {
         // HEADER ::= FTYP FNAME( VNAME1 , VNAME2 , VNAME3 )
         // FTYP and VNAMEs are ignored for translation purposes
         String fName = translateVNAME(node.getChild(1));
-        return "FUNC " + fName;
+        String v1 = translateVNAME(node.getChild(3));
+        String v2 = translateVNAME(node.getChild(5));
+        String v3 = translateVNAME(node.getChild(7));
+        return "\nFUNC " + fName + "(" + v1 + "," + v2 + "," + v3 + ")";
     }
     
     private String translateBODY(XMLParseTree node) {
         String pCode = translatePROLOG(node.getChild(0));
         String aCode = translateALGO(node.getChild(2));
-        String eCode = translateEPILOG(node.getChild(4));
-        String sCode = translateSUBFUNCS(node.getChild(5));
+        String eCode = translateEPILOG(node.getChild(3));
+        String sCode = translateSUBFUNCS(node.getChild(4));
         return pCode + "\n" + aCode + "\n" + eCode + "\n" + sCode;
     }
     
@@ -309,4 +322,75 @@ public class CodeGenerator {
     private String translateSUBFUNCS(XMLParseTree node) {
         return translateFUNCTIONS(node.getChild(0));
     }
+    public static String translateToBasic(String intermediateCode) {
+        String[] lines = intermediateCode.split("\n");
+        List<String> basicCode = new ArrayList<>();
+        Stack<String> functionStack = new Stack<>();
+    
+        for (String line : lines) {
+            line = line.trim();
+    
+            // Translate function declarations
+            if (line.startsWith("FUNC ")) {
+                basicCode.add("FUNCTION " + line.substring(5));
+                functionStack.push(line.substring(5, line.indexOf("(")));
+            } 
+            
+            // Translate assignments
+            else if (line.contains(" := ")) {
+                String[] parts = line.split(" := ");
+                if(parts[1].contains("CALL_")) {
+                    String functionName = parts[1].substring(5, parts[1].indexOf("("));
+                    basicCode.add(parts[0] + " = " + functionName + "(" + parts[1].substring(parts[1].indexOf("(") + 1, parts[1].indexOf(")")) + ")");
+                }
+                else {
+                    basicCode.add(parts[0] + " = " + parts[1]);
+                }
+            } 
+            
+            // Translate function calls
+            else if (line.startsWith("CALL_")) {
+                // Do nothing
+            } 
+            
+            // Translate labels
+            else if (line.startsWith("LABEL ")) {
+                basicCode.add(line.replace("LABEL ", "") + ":");
+            }
+            
+            // Translate IF-THEN-ELSE statements
+            else if (line.startsWith("IF ")) {
+                basicCode.add(line.replace(" THEN ", " THEN GOTO ").replace(" ELSE ", " ELSE GOTO "));
+            }
+            
+            // Translate RETURN
+            else if (line.startsWith("RETURN ")) {
+                if (!functionStack.isEmpty()) {
+                    String functionName = functionStack.peek();
+                    basicCode.add(functionName + " = " + line.substring(7));
+                }
+            } 
+            
+            // Translate STOP
+            else if (line.equals("STOP")) {
+                basicCode.add("END");
+                if (!functionStack.isEmpty()) {
+                    String functionName = functionStack.pop();
+                    basicCode.add("END FUNCTION ");
+                }
+            } 
+            
+            // Translate PRINT statements
+            else if (line.startsWith("PRINT ")) {
+                basicCode.add("PRINT " + line.substring(6));
+            }
+            
+            // REM statements remain the same
+            else if (line.startsWith("REM ")) {
+                basicCode.add(line);
+            }
+        }
+        
+        return String.join("\n", basicCode);
+    }    
 }

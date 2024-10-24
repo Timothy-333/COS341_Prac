@@ -12,10 +12,7 @@
    ```bash
    java -jar MyProgram.jar
    ```
-4. **View the Output**:
-   - The program will read the input from the `input.txt` file, process it, and display the output in the terminal as well as write to an output folder.
-
-5. **Example Input**:
+4. **Example Input**:
    - The `input.txt` file should contain the input data for the program. Here is an example of the input format:
 
    ```
@@ -54,3 +51,10 @@
    }
    end
    ```
+5. **View the Output**:
+   - The program will read the input from the `input.txt` file, process it, and display the output in the terminal as well as write to an output folder.
+
+6. **Run Output BASIC**:
+   - To run the output BASIC code, install the BASIC interpreter on your machine. You can download a BASIC interpreter from [this link](https://qb64.com).
+
+

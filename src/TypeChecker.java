@@ -32,40 +32,19 @@ public String findSymbolType(String symbol) {
         }
         break;
 
-        case "ALGO": //begin(0) INSTRUC(1) end(2) 
+        case "ALGO": //ALGO := begin(0) INSTRUC(1) end(2) 
         return typeCheck(children.get(1));
 
-        case "INSTRUC": //nullable
+        case "INSTRUC": //INSTRUC := nullable
         if (children.isEmpty()) {
             System.out.println("REACHED THE END OF INSTRUC");
             return true;
-        } else if (children.size() == 3) {
-            return typeCheck(children.get(0)) && typeCheck(children.get(1)) && typeCheck(children.get(2));
+        } else if (children.size() == 3) { //INSTRUC := COMMAND(0) ;(1) INSTRUC(2)
+            return typeCheck(children.get(0)) && typeCheck(children.get(2));
         }
         break;
 
-        // case "ASSIGN":
-        case "ASSIGN"://ASSIGN := VNAME(0) <(1) input(2)
-        if(children.get(2).getValue()==null){
-            System.out.println("input has no value");
-        }
-        if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getValue().equals("input")){
-            if(typeOf(children.get(0))=='n'){
-                return true;
-            }else{
-                // return false;
-                throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME input'");
-            }
-        }else if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getTag().equals("TERM")){
-            if(typeOf(children.get(0))==typeOf(children.get(2))){
-                return true;
-            }else{
-            // return false;
-            throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME TERM'");
-        }
-        }
-        break;
-        
+
 
         case "COMMAND"://COMMAND := skip(0) | halt(0) 
         if(children.get(0).getValue()==null){
@@ -84,7 +63,7 @@ public String findSymbolType(String symbol) {
             }
             else{
                 // return false;
-                throw new RuntimeException("Type Error:Invalid COMMAND type for 'print ATOMIC'");
+                throw new RuntimeException("Type Error: Invalid COMMAND type for 'print ATOMIC'");
             } 
         //return ATOMIC
         }
@@ -102,13 +81,40 @@ public String findSymbolType(String symbol) {
             if(typeOf(children.get(0))=='v'){
                 return true;
             }else{
-                throw new RuntimeException("Invalid COMMAND type");
+                throw new RuntimeException("Type Error: Invalid COMMAND type for 'CALL'");
             }
         //COMMAND := BRANCH (0)
         }else if(!children.isEmpty()&&children.get(0).getTag().equals("BRANCH")){
-            typeCheck(children.get(0));
+            return typeCheck(children.get(0));
         }
         break;
+
+
+
+        //* */ case "ASSIGN":
+        case "ASSIGN"://ASSIGN := VNAME(0) <(1) input(2)
+        if(children.get(2).getValue()!=null){
+            // System.out.println("input has no value");
+
+        if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getValue().equals("input")){
+            if(typeOf(children.get(0))=='n'){
+                return true;
+            }else{
+                // return false;
+                throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME < input'");
+            }
+        }// ASSIGN := VNAME(0) =(1) TERM(2)
+        }else if(!children.isEmpty()&&children.get(0).getTag().equals("VNAME")&&children.get(2).getTag().equals("TERM")){
+            if(typeOf(children.get(0))==typeOf(children.get(2))){
+                return true;
+            }else{
+            // return false;
+            throw new RuntimeException("Type Error: Invalid ASSIGN type for 'VNAME = TERM'");
+        }
+        }
+        break;
+
+        
 
         case "BRANCH":  //BRANCH := if(0) COND(1) then(2) ALGO(3) else(4) ALGO(5)
         if(typeOf(children.get(1))=='b'){
@@ -130,7 +136,10 @@ public String findSymbolType(String symbol) {
 
         case "SUBFUNCS": //SUBFUNCS := FUNCTIONS(0)
          return typeCheck(children.get(0));
-        
+
+        case "BODY": //BODY := PROLOG(0) LOCVARS(1) ALGO(2) EPILOG(3) SUBFUNCS(4) end
+        return typeCheck(children.get(0))&&typeCheck(children.get(1))&&typeCheck(children.get(2))&&typeCheck(children.get(4));
+
         case "PROLOG": //PROLOG := {
         System.out.println("REACHED BASE-CASE OF PROLOG");
          return true;
@@ -141,7 +150,6 @@ public String findSymbolType(String symbol) {
          
         case "LOCVARS": //LOCVARS := VTYP(0) VNAME(1) ,(2) VTYP(3) VNAME(4) ,(5) VTYP(6) VNAME(7)
         //*Taken care of by symbol Table */
-
         return true;
 
         case "DECL": //HEADER BODY
@@ -151,17 +159,16 @@ public String findSymbolType(String symbol) {
         if(typeOf(children.get(3))==typeOf(children.get(5))&&typeOf(children.get(5))==typeOf(children.get(7))&&typeOf(children.get(7))=='n'){
             return true;
         }else{
-            throw new RuntimeException("Invalid HEADER type"); 
+            throw new RuntimeException("Type Error: Invalid HEADER type"); 
         }
 
         
-        
         default:
-        System.out.println("Something went wrong in typeCheck@");
-            return false;
+        throw new RuntimeException("Type Error: Undefined Type");
+            // return false;
     }
-    System.out.println("Something went wrong in typeCheck");
-    return false;
+    throw new RuntimeException("Type Error: Unkown Type");
+    // return false;
  }
 
  public char typeOf(XMLParseTree xml) {
@@ -177,6 +184,9 @@ public String findSymbolType(String symbol) {
          }
          break;
 
+        case "ATOMIC": //ATOMIC := VNAME(0) | CONST (0)
+        return typeOf(xml.getChildren().get(0));
+
         case "CONST":
          if(children.get(0).getTag().equals("tokenn")){
             return 'n';
@@ -185,17 +195,35 @@ public String findSymbolType(String symbol) {
          }
          break;
 
+        case "FTYP": //FTYP := num(0) | void(0)
+        if(children.get(0).getValue().equals("num")){
+            return 'n';
+        }else if(children.get(0).getValue().equals("void")){
+            return 'v';
+        }
+        break;
+
+
         case "VNAME":
-        if(findSymbolType(children.get(0).getValue())=="text"){
+        if(findSymbolType(children.get(0).getValue()).equals("text")){
             return 't';
-        }else if(findSymbolType(children.get(0).getValue())=="num"){
+        }else if(findSymbolType(children.get(0).getValue()).equals("num")){
             return 'n';
         }
         break;
 
+
+
         case "TERM": //TERM := ATOMIC(0) | CALL (0) | OP (0)
         return typeOf(children.get(0));
 
+
+        case "CALL": //CALL := FNAME(0) ((1) ATOMIC(2) ,(3) ATOMIC(4) ,(5) ATOMIC(6) )(7)
+        if(typeOf(children.get(2))=='n' && typeOf(children.get(4))=='n' && typeOf(children.get(6))=='n'){
+            return typeOf(children.get(0));
+        }else{
+            throw new RuntimeException("Type Error: Invalid CALL type");
+        }
 
         
         case "BINOP": //BINOP := or | and |  eq | grt | add | sub | mul | div | not | sqrt
@@ -277,9 +305,9 @@ public String findSymbolType(String symbol) {
         return typeOf(children.get(0));
 
         case "FNAME":
-        if(findSymbolType(children.get(0).getValue())=="void"){
+        if(findSymbolType(children.get(0).getValue()).equals("void")){
             return 'v';
-        }else if(findSymbolType(children.get(0).getValue())=="num"){
+        }else if(findSymbolType(children.get(0).getValue()).equals("num")){
             return 'n';
         }
         break;
@@ -305,6 +333,7 @@ public String findSymbolType(String symbol) {
             }
             current = current.getParent();
         }
-        return false; // If no function scope was found
+        throw new RuntimeException("Function scope not found");
+        // return false; // If no function scope was found
     }  
 }

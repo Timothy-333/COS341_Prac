@@ -96,12 +96,6 @@ public class Parser {
                         this.root.addChild(temp.pop());
                     }
 
-
-                    // if (t.typeCheck(this.root)){
-                    //     System.out.println("TERRIFIC!");
-                    // }else{
-                    //     System.out.println("TERRIBLE!");}
-
                     String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
                     String xmlFileBody = root.toString();
                     String xmlFile = xmlFileHeader + xmlFileBody;
@@ -116,7 +110,11 @@ public class Parser {
                         TypeChecker typeChecker = new TypeChecker(scopeAnalyzer.getSymbolTable());
 
                         scopeAnalyzer.printSymbolTable();
-                        typeChecker.typeCheck(getRoot());
+                        if(typeChecker.typeCheck(getRoot())) {
+                            System.out.println("Type checking successful");
+                        }else{
+                            System.out.println("Type checking failed");
+                        };
                     } catch (Exception e) {
                         e.printStackTrace();;
                     }

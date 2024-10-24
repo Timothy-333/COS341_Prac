@@ -3,7 +3,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class ScopeAnalyzer {
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
     // Entry point for analysis
-    public Map<String, SymbolInfo> analyze(Parser.XMLParseTree root) {
+    public Map<String, SymbolInfo> analyze(XMLParseTree root) {
         System.out.println("Starting analysis...");
         scopeStack.push(new Scope(root.getId(), "F_main")); // Initialize scope with the root's ID
         traverseTree(root); // Start traversal from the root of the parse tree

@@ -3,11 +3,11 @@ import java.util.HashMap;
 
 public class IntermediateCodeGenerator {
     private Map<String, ScopeAnalyzer.SymbolInfo> symbolTable;
-    private Parser.XMLParseTree rootNode;
+    private XMLParseTree rootNode;
     private Map<String, String> functionMap = new HashMap<>();
     int labelCounter, varCounter = 0;
 
-    public IntermediateCodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, Parser.XMLParseTree rootNode) {
+    public IntermediateCodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, XMLParseTree rootNode) {
         this.symbolTable = symbolTable;
         this.rootNode = rootNode;
         this.functionMap.put("not", "!");
@@ -34,36 +34,36 @@ public class IntermediateCodeGenerator {
         return translatePROG(rootNode);
     }
 
-    public String translatePROG(Parser.XMLParseTree node) {
+    public String translatePROG(XMLParseTree node) {
         String aCode = translateALGO(node.getChild(2)); // ALGO is the third child
         // String fCode = translateFUNCTIONS(node.getChild(3)); // FUNCTIONS is the fourth child
         return aCode + "\nSTOP ";
         // + fCode;
     }
 
-    private String translateALGO(Parser.XMLParseTree node) {
+    private String translateALGO(XMLParseTree node) {
         // ALGO ::= begin INSTRUC end
         return translateINSTRUC(node.getChild(1)); // INSTRUC is the secondschild
     }
 
-    private String translateINSTRUC(Parser.XMLParseTree node) {
+    private String translateINSTRUC(XMLParseTree node) {
         if (node.getChildren().isEmpty()) {
             return "REM END";
         }
         // Handle INSTRUC1 ::= COMMAND ; INSTRUC2
         StringBuilder result = new StringBuilder();
-        Parser.XMLParseTree commandNode = node.getChild(0);
+        XMLParseTree commandNode = node.getChild(0);
         result.append(translateCOMMAND(commandNode)).append("\n");
         result.append(translateINSTRUC(node.getChild(2)));
         return result.toString().trim();
     }
 
-    private String translateCOMMAND(Parser.XMLParseTree node) {
+    private String translateCOMMAND(XMLParseTree node) {
         // Get the first child node which represents the actual command
         if (node.getChildren().isEmpty()) {
             return "";
         }
-        Parser.XMLParseTree commandNode = node.getChild(0);
+        XMLParseTree commandNode = node.getChild(0);
         String nodeName = commandNode.getTag();
 
         switch (nodeName) {
@@ -89,7 +89,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateASSIGN(Parser.XMLParseTree node) {
+    private String translateASSIGN(XMLParseTree node) {
         if (node.getChild(2).getValue() != null && node.getChild(2).getValue().equals("input")) {
             return "INPUT " + translateVNAME(node.getChild(0));
         } else {
@@ -99,7 +99,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateCALL(Parser.XMLParseTree node) {
+    private String translateCALL(XMLParseTree node) {
         String functionName = node.getChild(0).getChild(0).getValue();
         String p1 = translateATOMIC(node.getChild(2));
         String p2 = translateATOMIC(node.getChild(4));
@@ -107,7 +107,7 @@ public class IntermediateCodeGenerator {
         return "CALL_" + functionName + "(" + p1 + "," + p2 + "," + p3 + ")";
     }
 
-    private String translateBRANCH(Parser.XMLParseTree node) {
+    private String translateBRANCH(XMLParseTree node) {
         String label1 = newLabel();
         String label2 = newLabel();
         String label3 = newLabel();
@@ -117,7 +117,7 @@ public class IntermediateCodeGenerator {
         return code1 + "\n\nLABEL " + label1 + "\n" + code2 + "\nGOTO " + label3 + "\n\nLABEL " + label2 + "\n" + code3 + "\n\nLABEL " + label3;
     }
 
-    private String translateCOND(Parser.XMLParseTree node, String labelT, String labelF) {
+    private String translateCOND(XMLParseTree node, String labelT, String labelF) {
         // Handle SIMPLE and COMPOSIT conditions;
         String tag = node.getChild(0).getTag();
         if (tag.equals("SIMPLE")) {
@@ -128,7 +128,7 @@ public class IntermediateCodeGenerator {
         throw new IllegalArgumentException("Unknown COND type: " + node.getTag());
     }
 
-    private String translateSIMPLE(Parser.XMLParseTree node, String labelT, String labelF) {
+    private String translateSIMPLE(XMLParseTree node, String labelT, String labelF) {
         String t1 = newVar();
         String t2 = newVar();
         String binop = functionMap.get(node.getChild(0).getChild(0).getValue());
@@ -137,7 +137,7 @@ public class IntermediateCodeGenerator {
         return code1 + "\n" + code2 + "\nIF " + t1 + " " + binop + " " + t2 + " THEN " + labelT + " ELSE " + labelF;
     }
 
-    private String translateCOMPOSIT(Parser.XMLParseTree node, String labelT, String labelF) {
+    private String translateCOMPOSIT(XMLParseTree node, String labelT, String labelF) {
         // Handle BINOP and UNOP cases
         if (node.getChild(0).getTag().equals("BINOP")) {
             return translateBINOP(node, labelT, labelF);
@@ -147,7 +147,7 @@ public class IntermediateCodeGenerator {
         throw new IllegalArgumentException("Unknown COMPOSIT type: " + node.getChild(0).getTag());
     }
 
-    private String translateBINOP(Parser.XMLParseTree node, String labelT, String labelF) {
+    private String translateBINOP(XMLParseTree node, String labelT, String labelF) {
         String binop = node.getChild(0).getChild(0).getValue();
         if (binop.equals("or")) {
             String arg2 = newLabel();
@@ -165,7 +165,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateUNOP(Parser.XMLParseTree node, String labelT, String labelF) {
+    private String translateUNOP(XMLParseTree node, String labelT, String labelF) {
         String unop = node.getChild(0).getChild(0).getValue();
         if (unop.equals("not")) {
             return translateSIMPLE(node.getChild(2), labelF, labelT);
@@ -174,7 +174,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateATOMIC(Parser.XMLParseTree node, String place) {
+    private String translateATOMIC(XMLParseTree node, String place) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid ATOMIC node");
         }
@@ -187,7 +187,7 @@ public class IntermediateCodeGenerator {
         throw new IllegalArgumentException("Invalid ATOMIC node" + node.getValue());
     }
 
-    private String translateATOMIC(Parser.XMLParseTree node) {
+    private String translateATOMIC(XMLParseTree node) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid ATOMIC node");
         }
@@ -200,7 +200,7 @@ public class IntermediateCodeGenerator {
         throw new IllegalArgumentException("Invalid ATOMIC node" + node.getValue());
     }
 
-    private String translateVNAME(Parser.XMLParseTree node) {
+    private String translateVNAME(XMLParseTree node) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid VNAME node");
         }
@@ -211,7 +211,7 @@ public class IntermediateCodeGenerator {
         return vname;
     }
 
-    private String translateTERM(Parser.XMLParseTree node, String place) {
+    private String translateTERM(XMLParseTree node, String place) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid TERM node");
         }
@@ -228,7 +228,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateOP(Parser.XMLParseTree node, String place) {
+    private String translateOP(XMLParseTree node, String place) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid OP node");
         }
@@ -251,7 +251,7 @@ public class IntermediateCodeGenerator {
         }
     }
 
-    private String translateARG(Parser.XMLParseTree node, String place) {
+    private String translateARG(XMLParseTree node, String place) {
         if (node.getChildren().isEmpty()) {
             throw new IllegalArgumentException("Invalid ARG node");
         }

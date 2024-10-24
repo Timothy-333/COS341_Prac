@@ -38,6 +38,9 @@ public class XMLParseTree {
     public int getId(){
         return id;
     }
+    public XMLParseTree getChild(int index){
+        return children.get(index);
+    }
 
     public List<XMLParseTree> getChildren(){
         return children;

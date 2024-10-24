@@ -6,13 +6,9 @@ import java.util.*;
 public class main {
     public static void main(String[] args) {
         try {
-<<<<<<< HEAD
-            String text = new String(Files.readAllBytes(Paths.get("COS341_Prac/src/input.txt")), StandardCharsets.UTF_8);
-=======
             // Read input from file
             String text = new String(Files.readAllBytes(Paths.get("src/input2.txt")), StandardCharsets.UTF_8);
             // Lexical analysis
->>>>>>> main
             Lexer lexer = new Lexer(text);
             List<TokenClass> tokenList = lexer.lex();
             // Parsing
@@ -20,9 +16,18 @@ public class main {
             parser.parse();
             // Scope analysis
             ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+            XMLParseTree root = parser.getRoot();
             Map<String, ScopeAnalyzer.SymbolInfo> symbolTable = scopeAnalyzer.analyze(parser.getRoot());
             scopeAnalyzer.printSymbolTable();
             System.out.println();
+            // Type checking
+            TypeChecker typeChecker = new TypeChecker(symbolTable);
+            if (typeChecker.typeCheck(parser.getRoot())) {
+                System.out.println("Type checking passed");
+            } else {
+                System.out.println("Type checking failed");
+                
+            }
             // Intermediate code generation
             IntermediateCodeGenerator icg = new IntermediateCodeGenerator(symbolTable, parser.getRoot());
             String intermediateCode = icg.generateIntermediateCode();

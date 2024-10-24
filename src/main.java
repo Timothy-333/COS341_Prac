@@ -20,9 +20,13 @@ public class main {
             scopeAnalyzer.printSymbolTable();
             System.out.println();
             // Intermediate code generation
-            IntermediateCodeGenerator icg = new IntermediateCodeGenerator(symbolTable, parser.getRoot());
-            String intermediateCode = icg.generateIntermediateCode();
+            CodeGenerator icg = new CodeGenerator(symbolTable, parser.getRoot());
+            String intermediateCode = icg.generateIntermediateCode(false);
             System.out.println(intermediateCode);
+            // Write intermediate code to file
+            Files.write(Paths.get("src/outputs/intermediateCode.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
+            String targetCode = icg.generateIntermediateCode(true);
+            System.out.println(targetCode);
         } catch (IOException e) {
             e.printStackTrace();
         }

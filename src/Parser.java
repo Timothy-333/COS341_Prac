@@ -332,7 +332,7 @@ public class Parser {
 
     public static void writeToFile(String fileName, String root) {
         // Defining the folder and file path
-        String folderPath = "outputs/";
+        String folderPath = "src/outputs/";
         File folder = new File(folderPath);
         String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
         root = xmlFileHeader + root;

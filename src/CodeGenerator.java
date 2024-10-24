@@ -1,13 +1,13 @@
 import java.util.Map;
 import java.util.HashMap;
 
-public class IntermediateCodeGenerator {
+public class CodeGenerator {
     private Map<String, ScopeAnalyzer.SymbolInfo> symbolTable;
     private Parser.XMLParseTree rootNode;
     private Map<String, String> functionMap = new HashMap<>();
     int labelCounter, varCounter = 0;
 
-    public IntermediateCodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, Parser.XMLParseTree rootNode) {
+    public CodeGenerator(Map<String, ScopeAnalyzer.SymbolInfo> symbolTable, Parser.XMLParseTree rootNode) {
         this.symbolTable = symbolTable;
         this.rootNode = rootNode;
         this.functionMap.put("not", "!");
@@ -30,15 +30,17 @@ public class IntermediateCodeGenerator {
         return "L" + labelCounter++;
     }
 
-    public String generateIntermediateCode() {
-        return translatePROG(rootNode);
+    public String generateIntermediateCode(boolean withFunctions) {
+        return translatePROG(rootNode, withFunctions);
     }
-
-    public String translatePROG(Parser.XMLParseTree node) {
+    private String translatePROG(Parser.XMLParseTree node, boolean withFunctions) {
         String aCode = translateALGO(node.getChild(2)); // ALGO is the third child
-        // String fCode = translateFUNCTIONS(node.getChild(3)); // FUNCTIONS is the fourth child
-        return aCode + "\nSTOP ";
-        // + fCode;
+        String out = aCode + "\nSTOP";
+        if (withFunctions) {
+            String fCode = translateFUNCTIONS(node.getChild(4)); // FUNCTIONS is the fifth child
+            out += "\n" + fCode;
+        }
+        return out;
     }
 
     private String translateALGO(Parser.XMLParseTree node) {
@@ -260,5 +262,50 @@ public class IntermediateCodeGenerator {
         } else {
             return translateOP(node.getChild(0), place);
         }
+    }
+
+    // Function translation
+    private String translateFUNCTIONS(Parser.XMLParseTree node) {
+        if (node.getChildren().isEmpty()) {
+            return "REM END";
+        }
+        String dCode = translateDECL(node.getChild(0));
+        String fCode = translateFUNCTIONS(node.getChild(1));
+        return dCode + "\nSTOP\n" + fCode;
+    }
+    
+    private String translateDECL(Parser.XMLParseTree node) {
+        String header = translateHEADER(node.getChild(0));
+        String body = translateBODY(node.getChild(1));
+        return body;
+    }
+    
+    private String translateHEADER(Parser.XMLParseTree node) {
+        // HEADER ::= FTYP FNAME( VNAME1 , VNAME2 , VNAME3 )
+        // FTYP and VNAMEs are ignored for translation purposes
+        String fName = translateVNAME(node.getChild(1));
+        return "FUNC " + fName;
+    }
+    
+    private String translateBODY(Parser.XMLParseTree node) {
+        String pCode = translatePROLOG(node.getChild(0));
+        String aCode = translateALGO(node.getChild(2));
+        String eCode = translateEPILOG(node.getChild(4));
+        String sCode = translateSUBFUNCS(node.getChild(5));
+        return pCode + "\n" + aCode + "\n" + eCode + "\n" + sCode;
+    }
+    
+    private String translatePROLOG(Parser.XMLParseTree node) {
+        // Assuming inlining method
+        return "REM BEGIN";
+    }
+    
+    private String translateEPILOG(Parser.XMLParseTree node) {
+        // Assuming inlining method
+        return "REM END";
+    }
+    
+    private String translateSUBFUNCS(Parser.XMLParseTree node) {
+        return translateFUNCTIONS(node.getChild(0));
     }
 }

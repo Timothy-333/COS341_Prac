@@ -8,6 +8,9 @@ public class main {
     public static void main(String[] args) {
         try {
             // Read input from file
+            System.out.println("Please enter the input file name: ");
+            Scanner scanner = new Scanner(System.in);
+            String fileName = scanner.nextLine();
             System.out.println("\n\033[0;37m==================== Reading input from file ====================\033[0m");
             String text = Files.readString(Paths.get("input.txt"), StandardCharsets.US_ASCII);
             System.out.println("\033[0;32mReading input from file passed\033[0m");

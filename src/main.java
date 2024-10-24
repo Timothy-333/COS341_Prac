@@ -16,12 +16,23 @@ public class main {
             parser.parse();
             // Scope analysis
             ScopeAnalyzer scopeAnalyzer = new ScopeAnalyzer();
+            XMLParseTree root = parser.getRoot();
             Map<String, ScopeAnalyzer.SymbolInfo> symbolTable = scopeAnalyzer.analyze(parser.getRoot());
             scopeAnalyzer.printSymbolTable();
             System.out.println();
+            // Type checking
+            TypeChecker typeChecker = new TypeChecker(symbolTable);
+            if (typeChecker.typeCheck(parser.getRoot())) {
+                System.out.println("Type checking passed");
+            } else {
+                System.out.println("Type checking failed");
+                
+            }
             // Intermediate code generation
-            IntermediateCodeGenerator icg = new IntermediateCodeGenerator(symbolTable, parser.getRoot());
-            String intermediateCode = icg.generateIntermediateCode();
+            CodeGenerator icg = new CodeGenerator(symbolTable, parser.getRoot());
+            String intermediateCode = icg.generateIntermediateCode(false);
+            // Write intermediate code to a file
+            Files.write(Paths.get("src/outputs/intermediateCode5.a.txt"), intermediateCode.getBytes(StandardCharsets.UTF_8));
             System.out.println(intermediateCode);
         } catch (IOException e) {
             e.printStackTrace();

@@ -42,6 +42,7 @@ public class Parser {
                     semanticStack.push(token); // Push the token onto the semantic stack
                     
                     XMLParseTree leaf = new XMLParseTree(token.getAbsoluteType(),id++);
+                    
                     leaf.setValue(token.getWord()); //Set Value of Leaf
                     treeStack.push(leaf); //Add to Tree Stack
                     index++;
@@ -165,8 +166,6 @@ public class Parser {
         }
     }
 
-
-
     private static final List<Rule> rules = new ArrayList<>(Arrays.asList(
         new Rule("PROG", Arrays.asList("main", "GLOBVARS", "ALGO", "FUNCTIONS")),
         new Rule("GLOBVARS", Arrays.asList("")),
@@ -228,111 +227,9 @@ public class Parser {
         new Rule("SUBFUNCS", Arrays.asList("FUNCTIONS"))
     ));
 
-    class XMLParseTree {
-            private String tag;
-            private List<XMLParseTree> children;
-            private String value;
-            private int id;
-            private Map<String, String> attributes; // Add attributes map
-
-            public XMLParseTree(String tag, int id) {
-                this.id = id;
-                this.tag = tag;
-                this.children = new ArrayList<>();
-                this.attributes = new HashMap<>(); // Initialize attributes map
-            }
-    
-            public void addChild(XMLParseTree child) {
-                children.add(child);
-            }
-    
-            public void setValue(String value) {
-                this.value = value;
-            }
-    
-            public void setAttribute(String key, String value) {
-                attributes.put(key, value);
-            }
-    
-            public String getAttribute(String key) {
-                return attributes.get(key);
-            }
-    
-            @Override
-            public String toString() {
-                return toString(0); // Start with depth 0
-            }
-    
-        // Recursive method with indentation
-        public String toString(int depth) {
-            StringBuilder sb = new StringBuilder();
-            String indent = "\t".repeat(depth); // Two spaces per depth level
-    
-                // Collect children IDs
-                StringBuilder childrenIds = new StringBuilder();
-                for (XMLParseTree child : children) {
-                    if (childrenIds.length() > 0) {
-                        childrenIds.append(",");
-                    }
-                    childrenIds.append(child.id);
-                }
-    
-                // Open tag with ID and children IDs
-                sb.append(indent)
-                  .append("<").append(tag)
-                  .append(" id=\"").append(id).append("\"");
-    
-                if (childrenIds.length() > 0) {
-                    sb.append(" children=\"").append(childrenIds).append("\"");
-                } else {
-                    sb.append(" children=\"\"");
-                }
-    
-                // Add other attributes
-                for (Map.Entry<String, String> entry : attributes.entrySet()) {
-                    sb.append(" ").append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"");
-                }
-    
-                sb.append(">");
-    
-                // Add value or child nodes
-                if (value != null) {
-                    sb.append(value);
-                } else {
-                    sb.append("\n");
-                    for (XMLParseTree child : children) {
-                        sb.append(child.toString(depth + 1)); // Recursive call with increased depth
-                    }
-                    sb.append(indent); // Closing tag at the same indentation level
-                }
-    
-                sb.append("</").append(tag).append(">\n");
-                return sb.toString();
-            }
-    
-            public String getTag() {
-                return tag;
-            }
-    
-            public String getValue() {
-                return value;
-            }
-    
-            public List<XMLParseTree> getChildren() {
-                return children;
-            }
-            public int getId() {
-                return id;
-            }
-
-            public Parser.XMLParseTree getChild(int i) {
-                return children.get(i);
-            }
-        }
-
     public static void writeToFile(String fileName, String root) {
         // Defining the folder and file path
-        String folderPath = "outputs/";
+        String folderPath = "src/outputs/";
         File folder = new File(folderPath);
         String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
         root = xmlFileHeader + root;
@@ -345,16 +242,16 @@ public class Parser {
             }
         }
 
-        // Write to the file
-        try (FileWriter writer = new FileWriter(folderPath + fileName)) {
-            if (root != null) {
-                writer.write(root);
-                System.out.println("Data written to file: " + fileName);
-            } else {
-                System.out.println("No data found to write.");
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
+    // Write to the file
+    try (FileWriter writer = new FileWriter(folderPath + fileName)) {
+        if (root != null) {
+            writer.write(root);
+            System.out.println("Data written to file: " + fileName);
+        } else {
+            System.out.println("No data found to write.");
         }
+    } catch (IOException e) {
+        System.err.println("Error writing to file: " + e.getMessage());
     }
+}
 }

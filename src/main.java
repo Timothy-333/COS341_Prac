@@ -36,7 +36,7 @@ public class main {
             if (typeChecker.typeCheck(parser.getRoot())) {
             System.out.println("\033[0;32mType checking passed\033[0m");
             } else {
-            System.out.println("\033[0;31mType checking failed\033[0m");
+                throw new Exception("\033[0;31mType checking failed\033[0m");
             }
             
             // Intermediate code generation 5.a

@@ -83,7 +83,7 @@ public class Parser {
 
                 } else if (action.equals("acc")) {
                     // Accept action
-                    System.out.println("Parsing completed successfully.\n");
+                    System.out.println("\u001B[32mParsing completed successfully.\u001B[0m\n");
                     this.root = new XMLParseTree("PROG",id++);
                     
                     Stack<XMLParseTree> temp = new Stack<>();
@@ -104,8 +104,7 @@ public class Parser {
                 // System.out.println("Token: " + token + ", Action: " + action + ", State Stack: " + stateStack + ", Semantic Stack: " + semanticStack);
             }
         } catch (Exception e) {
-            System.err.println("Error during parsing: " + e.getMessage());
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -229,7 +228,7 @@ public class Parser {
 
     public static void writeToFile(String fileName, String root) {
         // Defining the folder and file path
-        String folderPath = "src/outputs/";
+        String folderPath = "outputs/";
         File folder = new File(folderPath);
         String xmlFileHeader  = "<? xml=\"1.0\" encoding=\"UTF-8\" ?>\n";
         root = xmlFileHeader + root;

@@ -1,0 +1,48 @@
+LET t1 = f0(9,3,0)
+LET v0 = t1
+PRINT v0
+REM END
+
+FUNCTION f0(v0,v1,v2)
+REM BEGIN
+LET t2 = v0
+LET t3 = v1
+IF t2 = t3 THEN GOTO L0 ELSE GOTO L1
+
+L0:
+f0 = v0
+REM END
+GOTO L2
+
+L1:
+LET t4 = v0
+LET t5 = v1
+IF t4 > t5 THEN GOTO L3 ELSE GOTO L4
+
+L3:
+LET t7 = v0
+LET t8 = v1
+LET t6 = t7 - t8
+LET v0 = t6
+REM END
+GOTO L5
+
+L4:
+LET t10 = v1
+LET t11 = v0
+LET t9 = t10 - t11
+LET v1 = t9
+REM END
+
+L5:
+LET t12 = f0(v0,v1,v2)
+LET v2 = t12
+f0 = v2
+REM END
+
+L2:
+REM END
+END FUNCTION
+REM END
+REM END
+REM END

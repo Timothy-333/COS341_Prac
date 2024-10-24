@@ -8,7 +8,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 public class ScopeAnalyzer {
     private Map<String, SymbolInfo> symbolTable = new HashMap<>();
-    private int uniqueIdCounter = 0;
+    private int uniqueIdVarCounter = 0;
+    private int uniqueIdFuncCounter = 0;
     private String typeEncountered = null; // Tracks the current type (e.g., "text" or "num") being processed
     private Deque<Scope> scopeStack = new ArrayDeque<>();
 
@@ -195,7 +196,12 @@ public class ScopeAnalyzer {
 
     // Generates a unique name for variables or functions
     private String generateUniqueName(String prefix) {
-        return prefix + uniqueIdCounter++; // Increment the counter for unique names
+        if (prefix.equals("v")) {
+            return prefix + uniqueIdVarCounter++;
+        } else if (prefix.equals("f")) {
+            return prefix + uniqueIdFuncCounter++;
+        }
+        return null;
     }
 
     // Gets information about a symbol from the symbol table

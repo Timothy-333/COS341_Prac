@@ -1,82 +1,34 @@
 main
-num V_x , text V_y , num V_a , num V_b , num V_c ,
+num V_a, num V_b, num V_c,
 begin
-    V_x < input ;
-    V_y = "Hello" ;
-    if and  ( grt  ( V_b , V_c )  , eq  ( V_a , 10 )  )  then
-        begin
-            print V_y ;
-            print V_x ;
-        end
-    else
-        begin
-            print "Bye" ;
-        end ;
-    V_x = F_test ( V_x , 2 , 3 ) ;
-    V_x = F_test3 ( V_x , 2 , 3 ) ;
+   V_a = F_euclid(9, 3, 0);
+   print V_a;
 end
-num F_test ( V_a , V_b , V_c )
+
+num F_euclid(V_a, V_b, V_c)
 {
-    num V_result ,
-    text V_d ,
-    num V_y ,
-    begin
-        V_result = add ( V_a , V_y ) ;
-        V_result = sub ( V_result , V_c ) ;
-        V_result = F_test3 ( V_result , 2 , 5 ) ;
-        return V_result ;
-    end
-}
-    num F_test3 ( V_a , V_b , V_c )
-    {
-        num V_result ,
-        text V_d ,
-        num V_y ,
-        begin
-            V_result = add ( V_a , V_y ) ;
-            V_result = sub ( V_result , V_c ) ;
-            V_result = F_test3 ( V_result , 2 , 5 ) ;
-            return V_result ;
-        end
-    }
-    end
-end
-num F_test3 ( V_a , V_b , V_c )
-{
-    num V_result ,
-    text V_d ,
-    num V_y ,
-    begin
-        V_result = add ( V_a , V_y ) ;
-        V_result = sub ( V_result , V_c ) ;
-        V_result = F_test3 ( V_result , 2 , 5 ) ;
-        return V_result ;
-end
-}
-    num F_test4 ( V_a , V_b , V_c )
-    {
-        num V_result ,
-        text V_d ,
-        num V_y ,
-        begin
-            V_result = add ( V_a , V_y ) ;
-            V_result = sub ( V_result , V_c ) ;
-            V_result = F_test5 ( V_result , 2 , 5 ) ;
-            return V_result ;
-        end
-    }
-        num F_test5 ( V_a , V_b , V_c )
-        {
-            num V_result ,
-            text V_d ,
-            num V_y ,
+   num V_d, text V_e, text V_f,
+   begin
+
+      if eq(V_a, V_b)
+      then
             begin
-                V_result = add ( V_a , V_y ) ;
-                V_result = sub ( V_result , V_c ) ;
-                V_result = F_test5 ( V_result , 2 , 5 ) ;
-                return V_result ;
+               return V_a;
             end
-        }
-        end
-    end
+      else
+            begin
+               if grt(V_a, V_b)
+               then
+                  begin
+                        V_a = sub(V_a, V_b);
+                  end
+               else
+                  begin
+                        V_b = sub(V_b, V_a);
+                  end;
+               V_c = F_euclid(V_a, V_b, V_c);
+               return V_c;
+            end;
+   end
+}
 end

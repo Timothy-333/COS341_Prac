@@ -1,0 +1,5 @@
+t0 := CALL_f0(9,3,0)
+v0 := t0
+PRINT v0
+REM END
+STOP
